@@ -1,3 +1,12 @@
+<!--
+  VARIANT E — Squarespace-style inline canvas editor
+  Interaction pattern: No separate setup wizard. Clicking "+ Create contest"
+  immediately shows a blank contest detail page in edit mode. Each section
+  (banner, sport/format, tiers) has an inline "click to configure" affordance.
+  Drawers slide in for each decision. User always sees the artifact, never a form.
+  Tradeoff being tested: eliminates the wizard abstraction entirely vs. higher
+  discoverability challenge — user must explore to understand what to configure.
+-->
 <!doctype html>
 <html lang="en">
 <head>
@@ -610,6 +619,48 @@
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 10px; z-index: 300; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .25s; }
   .toast.show { opacity: 1; }
 </style>
+<style>
+/* ── Variant E overrides ── */
+.ve-edit-mode .ve-section { position:relative; }
+.ve-section:hover .ve-edit-overlay { opacity:1; }
+.ve-edit-overlay { position:absolute; inset:0; background:rgba(20,224,200,.08); border:2px dashed var(--teal); border-radius:12px; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .18s; cursor:pointer; pointer-events:auto; z-index:5; }
+.ve-edit-overlay .ve-edit-badge { background:var(--teal); color:var(--ink); padding:8px 16px; border-radius:8px; font-weight:700; font-size:13px; display:flex; align-items:center; gap:6px; }
+.ve-toolbar { position:fixed; top:64px; left:0; right:0; z-index:90; background:var(--black); color:#fff; padding:10px 28px; display:flex; align-items:center; justify-content:space-between; }
+.ve-toolbar .ve-status { display:flex; align-items:center; gap:12px; font-size:13px; }
+.ve-toolbar .ve-dot { width:8px; height:8px; border-radius:50%; background:#4b5563; }
+.ve-toolbar .ve-dot.configured { background:var(--teal); }
+.ve-toolbar .ve-progress { display:flex; gap:8px; align-items:center; font-size:12px; color:#9ca3af; }
+.ve-toolbar .ve-prog-item { display:flex; align-items:center; gap:5px; }
+.ve-toolbar .ve-prog-item.done { color:var(--teal); }
+.ve-banner-empty { background:linear-gradient(135deg,#1a1c22,#2a2c33); aspect-ratio:5/1; display:flex; align-items:center; justify-content:center; position:relative; cursor:pointer; }
+.ve-banner-empty .ve-banner-hint { text-align:center; color:#4b5563; }
+.ve-banner-empty .ve-banner-hint .icon { font-size:36px; }
+.ve-banner-empty .ve-banner-hint p { font-size:13px; margin:6px 0 0; }
+.ve-section-placeholder { background:var(--card); border:2px dashed var(--line-strong); border-radius:12px; padding:28px; text-align:center; color:var(--ink-3); cursor:pointer; transition:all .18s; }
+.ve-section-placeholder:hover { border-color:var(--teal); color:var(--teal-ink); background:var(--teal-soft); }
+.ve-section-placeholder .ph-icon { font-size:28px; margin-bottom:8px; }
+.ve-section-placeholder p { margin:4px 0 0; font-size:13px; }
+/* Drawer */
+.ve-drawer-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:400; display:none; }
+.ve-drawer-overlay.open { display:block; }
+.ve-drawer { position:fixed; right:0; top:0; bottom:0; width:440px; background:var(--card); z-index:401; box-shadow:-24px 0 60px rgba(0,0,0,.15); transform:translateX(100%); transition:transform .28s ease; display:flex; flex-direction:column; }
+.ve-drawer.open { transform:translateX(0); }
+.ve-drawer-head { padding:20px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+.ve-drawer-head h2 { margin:0; font-size:18px; font-weight:700; }
+.ve-drawer-body { flex:1; overflow-y:auto; padding:24px; }
+.ve-drawer-footer { padding:16px 24px; border-top:1px solid var(--line); }
+.ve-apply-btn { width:100%; padding:14px; border-radius:10px; background:var(--teal); color:var(--ink); font-weight:700; font-size:15px; border:0; cursor:pointer; }
+.ve-apply-btn:hover { background:var(--teal-2); }
+/* Option rows in drawer */
+.ve-drawer-option { display:flex; align-items:center; gap:14px; padding:14px 16px; border:2px solid var(--line); border-radius:10px; cursor:pointer; margin-bottom:8px; transition:all .15s; }
+.ve-drawer-option:hover { border-color:var(--line-strong); }
+.ve-drawer-option.selected { border-color:var(--teal); background:var(--teal-soft); }
+.ve-drawer-option .dr-ico { font-size:24px; flex-shrink:0; }
+.ve-drawer-option h4 { margin:0 0 2px; font-size:14px; font-weight:700; }
+.ve-drawer-option p { margin:0; font-size:12px; color:var(--ink-2); }
+.ve-drawer-option.disabled { opacity:.4; pointer-events:none; }
+.ve-configured-banner { background:linear-gradient(135deg,#14E0C8,#064f47); }
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -650,243 +701,179 @@
     </div>
   </div>
 </div>
-<!-- CREATE STEP: Sport picker -->
-<div class="screen" id="screen-create-sport">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('lobby')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
+
+<!-- ═══ VARIANT E: Inline Canvas Editor ═══ -->
+<div class="screen" id="screen-ve-canvas" style="padding-top:64px;background:var(--bg);">
+  <!-- Edit mode toolbar -->
+  <div class="ve-toolbar">
+    <div class="ve-status">
+      <img src="assets/splash-logo-white.svg" style="height:18px;">
+      <span style="color:#9ca3af;">·</span>
+      <span>Editing draft contest</span>
+    </div>
+    <div class="ve-progress" id="ve-progress-bar">
+      <div class="ve-prog-item" id="veprog-sport">
+        <div class="ve-dot" id="vedot-sport"></div><span>Sport</span>
+      </div>
+      <span>›</span>
+      <div class="ve-prog-item" id="veprog-format">
+        <div class="ve-dot" id="vedot-format"></div><span>Format</span>
+      </div>
+      <span>›</span>
+      <div class="ve-prog-item" id="veprog-template">
+        <div class="ve-dot" id="vedot-template"></div><span>Tiers</span>
+      </div>
+      <span>›</span>
+      <div class="ve-prog-item" id="veprog-slate">
+        <div class="ve-dot" id="vedot-slate"></div><span>Slate</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn btn-ghost" style="color:#fff;border-color:#2a2c33;" onclick="confirmExitCreate()">Discard</button>
+      <button class="btn btn-primary" id="ve-publish-btn" style="opacity:.5;pointer-events:none;" onclick="vePublish()">Create contest →</button>
+    </div>
   </div>
-  <div class="create-progress">
-    <div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-shell">
-      <h1 class="stage-title">Pick your sport</h1>
-      <p class="stage-sub">We'll auto-fill the rest based on what's live this week. You can always change it later.</p>
-      <div class="sport-grid" id="sportGrid">
-        <div class="sport-card sport-nba" data-sport="nba" onclick="selectSport('nba')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><circle cx="20" cy="20" r="18" fill="#fff"/><circle cx="80" cy="60" r="14" fill="#fff"/><circle cx="50" cy="90" r="22" fill="#fff"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏀</div><div class="check">✓</div></div>
-            <div><div class="name">NBA</div><div class="formats">4 formats · Playoffs in progress</div></div>
+
+  <!-- Page content (padded below toolbar) -->
+  <div style="padding-top:44px;">
+
+    <!-- Banner section -->
+    <div class="ve-section" onclick="veOpenDrawer('sport')">
+      <div class="ve-banner-empty" id="ve-banner-area">
+        <div class="ve-banner-hint">
+          <div class="icon">🎨</div>
+          <p>Click to choose a sport &amp; format</p>
+          <p style="font-size:11px;margin-top:4px;opacity:.6;">Banner is auto-generated after creation</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:1200px;margin:0 auto;padding:0 28px;">
+      <!-- Contest name placeholder -->
+      <div style="padding:20px 0 0;">
+        <h1 style="font-size:28px;font-weight:800;margin:0 0 4px;color:var(--ink-3);" id="ve-title-placeholder">← Click the banner to choose sport + format</h1>
+        <div style="height:1px;background:var(--line);margin:16px 0;"></div>
+      </div>
+
+      <div class="contest-grid" style="align-items:start;">
+        <!-- Left: tiers placeholder -->
+        <div>
+          <div class="ve-section" onclick="veOpenDrawer('tiers')" id="ve-tiers-section">
+            <div class="ve-section-placeholder">
+              <div class="ph-icon">⚙️</div>
+              <p style="font-weight:700;font-size:14px;margin-top:4px;">Click to configure tiers</p>
+              <p>Set how the contest is structured — choose a template or build custom</p>
+            </div>
+          </div>
+
+          <div class="ve-section" onclick="veOpenDrawer('slate')" id="ve-slate-section" style="margin-top:16px;">
+            <div class="ve-section-placeholder">
+              <div class="ph-icon">📅</div>
+              <p style="font-weight:700;font-size:14px;margin-top:4px;">Click to set the schedule</p>
+              <p>Choose which slate of games this contest covers</p>
+            </div>
           </div>
         </div>
-        <div class="sport-card sport-pga" data-sport="pga" onclick="selectSport('pga')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><circle cx="80" cy="80" r="6" fill="#fff"/><path d="M20 20 L40 40 L20 60 Z" fill="#fff"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">⛳</div><div class="check">✓</div></div>
-            <div><div class="name">PGA</div><div class="formats">3 formats · Tour active</div></div>
+
+        <!-- Right: info sidebar -->
+        <div>
+          <div class="side-card" style="border:2px dashed var(--line-strong);">
+            <h3>🐳 Whale Wallet</h3>
+            <p class="text-muted" style="font-size:13px;line-height:1.5;">Set up entry fees &amp; prizes after creation. Powered by Whop.</p>
           </div>
-        </div>
-        <div class="sport-card sport-mlb" data-sport="mlb" onclick="selectSport('mlb')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><path d="M10 50 Q30 30 50 50 T90 50" stroke="#fff" stroke-width="3" fill="none"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">⚾</div><div class="check">✓</div></div>
-            <div><div class="name">MLB</div><div class="formats">5 formats · Mid-season</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-nfl sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏈</div></div>
-            <div><div class="name">NFL</div><div class="formats">Returns in September</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-nhl sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏒</div></div>
-            <div><div class="name">NHL</div><div class="formats">Stanley Cup playoffs</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-mma sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🥊</div></div>
-            <div><div class="name">UFC</div><div class="formats">Next event Saturday</div></div>
+          <div class="side-card" style="margin-top:16px;">
+            <h3>Contest details</h3>
+            <div class="stat-row"><span class="l">Sport</span><span class="v" id="ve-detail-sport" style="color:var(--ink-3);">Not set</span></div>
+            <div class="stat-row"><span class="l">Format</span><span class="v" id="ve-detail-format" style="color:var(--ink-3);">Not set</span></div>
+            <div class="stat-row"><span class="l">Template</span><span class="v" id="ve-detail-template" style="color:var(--ink-3);">Not set</span></div>
+            <div class="stat-row"><span class="l">Slate</span><span class="v" id="ve-detail-slate" style="color:var(--ink-3);">Not set</span></div>
+            <div class="stat-row"><span class="l">Entries per user</span><span class="v">1 each</span></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('lobby')">Cancel</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 1 of 5 · Click a sport to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
   </div>
 </div>
 
-<!-- CREATE STEP: Format picker -->
-<div class="screen" id="screen-create-format">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-sport')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
+<!-- Drawer overlays -->
+<div class="ve-drawer-overlay" id="ve-drawer-bg" onclick="veCloseDrawer()"></div>
+
+<!-- Sport+Format drawer -->
+<div class="ve-drawer" id="ve-drawer-sport">
+  <div class="ve-drawer-head">
+    <h2>Sport &amp; Format</h2>
+    <button onclick="veCloseDrawer()" style="color:var(--ink-3);font-size:22px;padding:4px 10px;">✕</button>
   </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-narrow">
-      <h1 class="stage-title">Pick a game format</h1>
-      <p class="stage-sub">How do you want people to play? You can change this anytime before the contest goes live.</p>
-      <div class="format-grid">
-        <div class="format-card" data-format="tiers" onclick="selectFormat('tiers')">
-          <div class="preview">🎯</div>
-          <div class="info">
-            <h3>Tiers <span class="badge-pop">POPULAR</span></h3>
-            <p>Pick one player from each tier. Highest combined fantasy score wins.</p>
-            <span class="tag">⏱ 5 min to enter</span><span class="tag">💎 Skill-based</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="pickem" onclick="selectFormat('pickem')">
-          <div class="preview">✓</div>
-          <div class="info">
-            <h3>Pick'em</h3>
-            <p>Pick which team or player wins each matchup. Most correct picks wins.</p>
-            <span class="tag">⏱ 2 min</span><span class="tag">🎲 Casual</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="survivor" onclick="selectFormat('survivor')">
-          <div class="preview">🛡️</div>
-          <div class="info">
-            <h3>Survivor</h3>
-            <p>Pick one team per round. If they lose, you're out. Last one standing wins.</p>
-            <span class="tag">📅 Multi-week</span><span class="tag">🎯 Strategy</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="bestball" onclick="selectFormat('bestball')">
-          <div class="preview">🏆</div>
-          <div class="info">
-            <h3>Best Ball</h3>
-            <p>Draft a roster. We auto-start your highest scorers each week.</p>
-            <span class="tag">📅 Season-long</span><span class="tag">🤖 Auto-managed</span>
-          </div>
-        </div>
-      </div>
+  <div class="ve-drawer-body">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink-3);margin-bottom:12px;">Sport</div>
+    <div class="ve-drawer-option" data-sport="nba" onclick="vePickSport('nba',this)">
+      <div class="dr-ico">🏀</div><div><h4>NBA</h4><p>Playoffs in progress · 4 formats</p></div>
+    </div>
+    <div class="ve-drawer-option" data-sport="pga" onclick="vePickSport('pga',this)">
+      <div class="dr-ico">⛳</div><div><h4>PGA</h4><p>Tour active · 3 formats</p></div>
+    </div>
+    <div class="ve-drawer-option" data-sport="mlb" onclick="vePickSport('mlb',this)">
+      <div class="dr-ico">⚾</div><div><h4>MLB</h4><p>Mid-season · 5 formats</p></div>
+    </div>
+    <div class="ve-drawer-option disabled"><div class="dr-ico">🏈</div><div><h4>NFL <span style="font-size:10px;background:var(--bg);color:var(--ink-3);padding:2px 6px;border-radius:99px;">Coming soon</span></h4></div></div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink-3);margin:20px 0 12px;">Format</div>
+    <div class="ve-drawer-option" data-format="tiers" onclick="vePickFormat('tiers',this)">
+      <div class="dr-ico">🎯</div><div><h4>Tiers <span style="font-size:10px;background:var(--warn-soft);color:var(--warn);padding:2px 6px;border-radius:99px;margin-left:4px;">POPULAR</span></h4><p>Pick one player per tier, highest score wins</p></div>
+    </div>
+    <div class="ve-drawer-option" data-format="pickem" onclick="vePickFormat('pickem',this)">
+      <div class="dr-ico">✅</div><div><h4>Pick'em</h4><p>Predict winners each matchup</p></div>
+    </div>
+    <div class="ve-drawer-option" data-format="survivor" onclick="vePickFormat('survivor',this)">
+      <div class="dr-ico">🛡️</div><div><h4>Survivor</h4><p>Last one standing wins</p></div>
     </div>
   </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-sport')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 2 of 5 · Click a format to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
-  </div>
-</div>
-<!-- CREATE STEP: Template picker -->
-<div class="screen" id="screen-create-template">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-format')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
-  </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-narrow">
-      <h1 class="stage-title">Start from a template</h1>
-      <p class="stage-sub">Pre-built tier setups so you don't have to build from scratch. You can tweak everything in the next step.</p>
-      <div class="template-grid">
-        <div class="template-card" data-template="classic" onclick="selectTemplate('classic')">
-          <div class="head"><div><div class="ttl">Classic 6 Tiers</div><div class="desc">Stars to deep cuts · 7 players each</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Stars</span><span class="tier-pill">Studs</span><span class="tier-pill">Mid</span>
-            <span class="tier-pill">Sleepers</span><span class="tier-pill">Deep</span><span class="tier-pill">Lottery</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="star" onclick="selectTemplate('star')">
-          <div class="head"><div><div class="ttl">Star + Studs</div><div class="desc">5 tiers, narrow at the top</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Star (5)</span><span class="tier-pill">Stud (8)</span><span class="tier-pill">Mid (8)</span>
-            <span class="tier-pill">Sleeper (10)</span><span class="tier-pill">Deep (10)</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="flex" onclick="selectTemplate('flex')">
-          <div class="head"><div><div class="ttl">Flex 4-Tier</div><div class="desc">Quick to fill, more lineup variety</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Anchor</span><span class="tier-pill">Co-star</span><span class="tier-pill">Glue guy</span><span class="tier-pill">Wildcard</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="deep" onclick="selectTemplate('deep')">
-          <div class="head"><div><div class="ttl">Deep Cuts (8)</div><div class="desc">For the degens — every player matters</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">T1</span><span class="tier-pill">T2</span><span class="tier-pill">T3</span><span class="tier-pill">T4</span>
-            <span class="tier-pill">T5</span><span class="tier-pill">T6</span><span class="tier-pill">T7</span><span class="tier-pill">T8</span>
-          </div>
-        </div>
-        <div class="template-card custom" data-template="custom" onclick="selectTemplate('custom')">
-          <div class="head"><div><div class="ttl">Build from scratch</div><div class="desc">Full control over tiers, names, and pool sizes</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Customize everything</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-format')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 3 of 5 · Click a template to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
+  <div class="ve-drawer-footer">
+    <button class="ve-apply-btn" onclick="veApplySportFormat()">Apply →</button>
   </div>
 </div>
 
-<!-- CREATE STEP: Settings (size, entries, slate) -->
-<div class="screen" id="screen-create-settings">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-template')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
+<!-- Tiers drawer -->
+<div class="ve-drawer" id="ve-drawer-tiers">
+  <div class="ve-drawer-head">
+    <h2>Tier template</h2>
+    <button onclick="veCloseDrawer()" style="color:var(--ink-3);font-size:22px;padding:4px 10px;">✕</button>
   </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div>
+  <div class="ve-drawer-body">
+    <div class="ve-drawer-option" data-tpl="classic" onclick="vePickTemplate('classic',this)"><div class="dr-ico">⭐</div><div><h4>Classic 6 Tiers</h4><p>Stars → Deep cuts · 42 players</p></div></div>
+    <div class="ve-drawer-option" data-tpl="star" onclick="vePickTemplate('star',this)"><div class="dr-ico">💎</div><div><h4>Star + Studs</h4><p>5 tiers, narrow at the top · 41 players</p></div></div>
+    <div class="ve-drawer-option" data-tpl="flex" onclick="vePickTemplate('flex',this)"><div class="dr-ico">🔀</div><div><h4>Flex 4-Tier</h4><p>Quick to fill, more variety · 36 players</p></div></div>
+    <div class="ve-drawer-option" data-tpl="deep" onclick="vePickTemplate('deep',this)"><div class="dr-ico">🎲</div><div><h4>Deep Cuts (8 tiers)</h4><p>40 players, every pick matters</p></div></div>
+    <div class="ve-drawer-option" data-tpl="custom" onclick="vePickTemplate('custom',this)"><div class="dr-ico">✨</div><div><h4>Build from scratch</h4><p>Open the full tier editor</p></div></div>
   </div>
-  <div class="create-bg">
-    <div class="stage-narrow">
-      <h1 class="stage-title">Set the rules</h1>
-      <p class="stage-sub">Schedule and entry limits. No money decisions yet — that comes after.</p>
-      <div class="feature-section">
-        <h3>Schedule</h3>
-        <p class="feature-help">Which slate are you running this for?</p>
-        <div class="pill-grid cols-4">
-          <div class="day-card" data-day="0"><div class="d">Today</div><div class="dt">Wed, May 6</div></div>
-          <div class="day-card" data-day="1"><div class="d">Tomorrow</div><div class="dt">Thu, May 7</div></div>
-          <div class="day-card" data-day="2"><div class="d">Friday</div><div class="dt">Fri, May 8</div></div>
-          <div class="day-card" data-day="3"><div class="d">Saturday</div><div class="dt">Sat, May 9</div></div>
-        </div>
-        <div class="pill-grid cols-2 mt-12">
-          <div class="pill" data-games="all">All games on selected day</div>
-          <div class="pill" data-games="prime">Prime time only (8 PM ET+)</div>
-        </div>
-      </div>
-      <div class="feature-section">
-        <h3>Entries per user</h3>
-        <p class="feature-help">How many lineups can each person submit? Total contest entries are unlimited — anyone with the link can join.</p>
-        <div class="pill-grid cols-5">
-          <div class="pill active" data-limit="1">1 each</div>
-          <div class="pill" data-limit="5">5 each</div>
-          <div class="pill" data-limit="10">10 each</div>
-          <div class="pill" data-limit="unlimited">Unlimited</div>
-          <div class="pill" data-limit="custom">Custom</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-template')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 4 of 5</span></div>
-    <div class="right"><button class="btn btn-primary btn-lg" onclick="goToTiersOrConfirm()">Continue →</button></div>
+  <div class="ve-drawer-footer">
+    <button class="ve-apply-btn" onclick="veApplyTemplate()">Apply →</button>
   </div>
 </div>
 
-<!-- CREATE STEP: Tier customizer (only if template = custom) -->
-<div class="screen" id="screen-create-tiers">
+<!-- Slate drawer -->
+<div class="ve-drawer" id="ve-drawer-slate">
+  <div class="ve-drawer-head">
+    <h2>Schedule</h2>
+    <button onclick="veCloseDrawer()" style="color:var(--ink-3);font-size:22px;padding:4px 10px;">✕</button>
+  </div>
+  <div class="ve-drawer-body">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink-3);margin-bottom:12px;">Slate</div>
+    <div class="ve-drawer-option" data-day="0" onclick="vePickDay(0,this)"><div class="dr-ico">📅</div><div><h4>Today</h4><p>Wednesday, May 6</p></div></div>
+    <div class="ve-drawer-option" data-day="1" onclick="vePickDay(1,this)"><div class="dr-ico">📅</div><div><h4>Tomorrow</h4><p>Thursday, May 7</p></div></div>
+    <div class="ve-drawer-option" data-day="2" onclick="vePickDay(2,this)"><div class="dr-ico">📅</div><div><h4>Friday</h4><p>Friday, May 8</p></div></div>
+    <div class="ve-drawer-option" data-day="3" onclick="vePickDay(3,this)"><div class="dr-ico">📅</div><div><h4>Saturday</h4><p>Saturday, May 9</p></div></div>
+    <div style="margin-top:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink-3);margin-bottom:12px;">Entries per user</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+      <button class="vd-sel-card" onclick="vePickLimit(1,this)" style="padding:12px;border:2px solid var(--line);border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;"><div>1</div></button>
+      <button class="vd-sel-card" onclick="vePickLimit(5,this)" style="padding:12px;border:2px solid var(--line);border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;"><div>5</div></button>
+      <button class="vd-sel-card" onclick="vePickLimit(10,this)" style="padding:12px;border:2px solid var(--line);border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;"><div>10</div></button>
+      <button class="vd-sel-card" onclick="vePickLimit('unlimited',this)" style="padding:12px;border:2px solid var(--line);border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;"><div>∞</div></button>
+    </div>
+  </div>
+  <div class="ve-drawer-footer">
+    <button class="ve-apply-btn" onclick="veApplySlate()">Apply →</button>
+  </div>
+</div>
   <div class="create-titlebar">
     <button class="back" onclick="goTo('create-settings')">←</button>
     <div class="title">Create contest</div>
@@ -2954,3 +2941,72 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+<script>
+/* ── Variant E JS ── */
+let _veSportPick=null,_veFormatPick=null,_veTplPick=null,_veDayPick=null,_veLimitPick=1,_veActiveDrawer=null;
+const VE_SPORT_LABELS={nba:'🏀 NBA',pga:'⛳ PGA',mlb:'⚾ MLB'};
+const VE_FORMAT_LABELS={tiers:'Tiers',pickem:"Pick'em",survivor:'Survivor',bestball:'Best Ball'};
+const VE_TPL_LABELS={classic:'Classic 6 Tiers',star:'Star+Studs',flex:'Flex 4-Tier',deep:'Deep Cuts (8)',custom:'Custom'};
+const VE_SPORT_BGS={nba:'linear-gradient(135deg,#ea580c,#b91c1c)',pga:'linear-gradient(135deg,#15803d,#14532d)',mlb:'linear-gradient(135deg,#1e3a8a,#b91c1c)'};
+function startCreate(){ _veSportPick=null;_veFormatPick=null;_veTplPick=null;_veDayPick=null; veUpdateProgress(); goTo('screen-ve-canvas'); }
+function veOpenDrawer(which){
+  _veActiveDrawer=which;
+  document.getElementById('ve-drawer-bg').classList.add('open');
+  document.querySelectorAll('.ve-drawer').forEach(d=>d.classList.remove('open'));
+  const d=document.getElementById('ve-drawer-'+which); if(d) d.classList.add('open');
+}
+function veCloseDrawer(){ document.getElementById('ve-drawer-bg').classList.remove('open'); document.querySelectorAll('.ve-drawer').forEach(d=>d.classList.remove('open')); _veActiveDrawer=null; }
+function vePickSport(s,el){ _veSportPick=s; el.closest('.ve-drawer-body').querySelectorAll('[data-sport]').forEach(o=>o.classList.remove('selected')); el.classList.add('selected'); }
+function vePickFormat(f,el){ _veFormatPick=f; el.closest('.ve-drawer-body').querySelectorAll('[data-format]').forEach(o=>o.classList.remove('selected')); el.classList.add('selected'); }
+function veApplySportFormat(){
+  if(!_veSportPick||!_veFormatPick) return;
+  state.sport=_veSportPick; state.format=_veFormatPick;
+  // Update banner
+  const banner=document.getElementById('ve-banner-area');
+  banner.style.background=VE_SPORT_BGS[_veSportPick]||'var(--ink)';
+  banner.innerHTML=`<div style="color:#fff;text-align:center;"><div style="font-size:48px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));">${{nba:'🏀',pga:'⛳',mlb:'⚾'}[_veSportPick]}</div><div style="font-size:22px;font-weight:800;margin-top:8px;">${VE_SPORT_LABELS[_veSportPick]} ${VE_FORMAT_LABELS[_veFormatPick]}</div></div>`;
+  document.getElementById('ve-title-placeholder').textContent='Configure tiers and schedule →';
+  document.getElementById('ve-title-placeholder').style.color='var(--ink)';
+  document.getElementById('ve-detail-sport').textContent=VE_SPORT_LABELS[_veSportPick]; document.getElementById('ve-detail-sport').style.color='var(--ink)';
+  document.getElementById('ve-detail-format').textContent=VE_FORMAT_LABELS[_veFormatPick]; document.getElementById('ve-detail-format').style.color='var(--ink)';
+  veUpdateProgress(); veCloseDrawer();
+}
+function vePickTemplate(t,el){ _veTplPick=t; el.closest('.ve-drawer-body').querySelectorAll('[data-tpl]').forEach(o=>o.classList.remove('selected')); el.classList.add('selected'); }
+function veApplyTemplate(){
+  if(!_veTplPick) return;
+  state.template=_veTplPick;
+  if(_veTplPick==='custom'){ veCloseDrawer(); seedTiersFromTemplate('custom'); goTo('create-tiers'); return; }
+  applyTemplate(_veTplPick);
+  const sec=document.getElementById('ve-tiers-section');
+  const tiers={classic:[['Stars',7],['Studs',7],['Mid',7],['Sleepers',7],['Deep',7],['Lottery',7]],star:[['Star',5],['Stud',8],['Mid',8],['Sleeper',10],['Deep',10]],flex:[['Anchor',6],['Co-star',8],['Glue',10],['Wildcard',12]],deep:Array.from({length:8},(_,i)=>[`Tier ${i+1}`,5])};
+  const rows=(tiers[_veTplPick]||[]).map((t,i)=>`<div class="stat-row"><span class="l"><strong>${i+1}. ${t[0]}</strong></span><span class="v">${t[1]} players</span></div>`).join('');
+  sec.innerHTML=`<div class="panel"><h2 style="display:flex;align-items:center;justify-content:space-between;">Tier structure <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;" onclick="veOpenDrawer('tiers')">Edit</button></h2>${rows}</div>`;
+  document.getElementById('ve-detail-template').textContent=VE_TPL_LABELS[_veTplPick]; document.getElementById('ve-detail-template').style.color='var(--ink)';
+  veUpdateProgress(); veCloseDrawer();
+}
+function vePickDay(d,el){ _veDayPick=d; state.slate.day=d; const labels=['Wed, May 6','Thu, May 7','Fri, May 8','Sat, May 9']; state.slate.dayLabel=labels[d]+' 2026'; el.closest('.ve-drawer-body').querySelectorAll('[data-day]').forEach(o=>o.classList.remove('selected')); el.classList.add('selected'); }
+function vePickLimit(l,el){ _veLimitPick=l; state.limit=l; el.closest('div').querySelectorAll('button').forEach(b=>b.style.borderColor='var(--line)'); el.style.borderColor='var(--teal)'; el.style.background='var(--teal-soft)'; }
+function veApplySlate(){
+  if(_veDayPick===null) return;
+  const labels=['Wed, May 6','Thu, May 7','Fri, May 8','Sat, May 9'];
+  const sec=document.getElementById('ve-slate-section');
+  sec.innerHTML=`<div class="panel"><h2 style="display:flex;align-items:center;justify-content:space-between;">Schedule <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;" onclick="veOpenDrawer('slate')">Edit</button></h2><div class="stat-row"><span class="l">Slate</span><span class="v">${labels[_veDayPick]}</span></div><div class="stat-row"><span class="l">Entries per user</span><span class="v">${_veLimitPick==='unlimited'?'Unlimited':_veLimitPick+' each'}</span></div></div>`;
+  document.getElementById('ve-detail-slate').textContent=labels[_veDayPick]; document.getElementById('ve-detail-slate').style.color='var(--ink)';
+  veUpdateProgress(); veCloseDrawer();
+}
+function veUpdateProgress(){
+  const dots={sport:'vedot-sport',format:'vedot-format',template:'vedot-template',slate:'vedot-slate'};
+  const progs={sport:'veprog-sport',format:'veprog-format',template:'veprog-template',slate:'veprog-slate'};
+  function mark(id,prog,ok){ const d=document.getElementById(id); if(d) d.classList.toggle('configured',ok); const p=document.getElementById(prog); if(p) p.classList.toggle('done',ok); }
+  mark(dots.sport,progs.sport,!!_veSportPick);
+  mark(dots.format,progs.format,!!_veFormatPick);
+  mark(dots.template,progs.template,!!_veTplPick);
+  mark(dots.slate,progs.slate,_veDayPick!==null);
+  const allDone=_veSportPick&&_veFormatPick&&_veTplPick&&_veDayPick!==null;
+  const btn=document.getElementById('ve-publish-btn'); if(btn){ btn.style.opacity=allDone?'1':'0.5'; btn.style.pointerEvents=allDone?'auto':'none'; }
+}
+function vePublish(){
+  if(!_veSportPick||!_veFormatPick||!_veTplPick||_veDayPick===null) return;
+  goTo('create-confirm');
+}
+</script>
