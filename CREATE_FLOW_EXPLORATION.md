@@ -131,3 +131,21 @@ That table is the artifact TJ will use to pick a winner.
 ✅ One Slack-friendly summary message (3–4 sentences) at the bottom of this file that TJ can paste to share with his business partner
 
 That's it. Ship breadth, not polish. We'll polish whichever direction wins.
+
+---
+
+## Variant Comparison
+
+| Variant | URL | Steps to first contest | Best-fit user | Biggest tradeoff | Mobile feel (1–5) | Power-user feel (1–5) |
+|---------|-----|----------------------|---------------|------------------|-------------------|----------------------|
+| **A — Typeform** | [v-a-typeform](https://tjsplash.github.io/splash-whale-wallet-prototype/v-a-typeform/) | 4 taps + 1 form screen | First-time commissioner; anxious users who want clarity | One screen per choice = more total screens; feels slow for repeat creators | 5 | 2 |
+| **B — Live Preview** | [v-b-live-preview](https://tjsplash.github.io/splash-whale-wallet-prototype/v-b-live-preview/) | 1 screen, 4 decisions | Skeptical user who wants to see what they're building before committing | Split-pane is awkward on small phones; preview must stay legible as data fills in | 3 | 4 |
+| **C — Template Gallery** | [v-c-template-gallery](https://tjsplash.github.io/splash-whale-wallet-prototype/v-c-template-gallery/) | 2 taps (pick template → tweak settings) | Commissioner who re-runs the same format weekly; league admins | Requires good pre-built templates or gallery feels empty; discovery vs. blank-slate tension | 4 | 4 |
+| **D — Command Palette** | [v-d-command-palette](https://tjsplash.github.io/splash-whale-wallet-prototype/v-d-command-palette/) | 1 typed command (power users) | Power users creating the same contest weekly; keyboard-first operators | Discoverability near-zero for new users; fallback form must not feel like a punishment | 2 | 5 |
+| **E — Inline Canvas** | [v-e-inline-canvas](https://tjsplash.github.io/splash-whale-wallet-prototype/v-e-inline-canvas/) | 3 drawer interactions | Design-conscious commissioners; users who prefer direct manipulation | Highest learning curve; "click here to edit" affordance can be invisible on first visit | 3 | 3 |
+
+---
+
+## Slack Summary
+
+> We just shipped 5 working prototypes of the Splash "Create Contest" flow — each one a fundamentally different UX direction. **Variant A** (Typeform-style) is one question per screen, great for newcomers. **Variant B** (Stripe-style) shows a live contest preview alongside the form as you fill it in. **Variant C** (Template Gallery) opens with a pre-built contest picker — most commissioners can be done in 2 taps. **Variant D** (Command Palette) lets power users type `nba tiers today` and be done in 4 seconds, with a traditional form underneath for everyone else. **Variant E** (Inline Canvas) skips the wizard entirely — you edit a blank contest page directly, Squarespace-style. Each is deployed and clickable. Links in the brief. Pick a winner (or two to hybridize) and we'll polish from there.
