@@ -1,3 +1,11 @@
+<!--
+  VARIANT D — Linear-style command palette + form fallback
+  Interaction pattern: Power users hit Cmd+K and type freeform
+  (e.g. "nba tiers today classic"). The contest builds as they type.
+  A traditional wizard form sits underneath for first-timers.
+  Tradeoff being tested: blazing speed for returning commissioners
+  vs. discovery challenge — newcomers may not know to use it.
+-->
 <!doctype html>
 <html lang="en">
 <head>
@@ -610,6 +618,49 @@
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 10px; z-index: 300; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .25s; }
   .toast.show { opacity: 1; }
 </style>
+<style>
+/* ── Variant D overrides ── */
+.vd-shell { max-width:760px; margin:0 auto; padding:40px 28px 120px; }
+.vd-power-hint { background:linear-gradient(135deg,#1a1c22,#2a2c33); color:#fff; border-radius:14px; padding:18px 22px; margin-bottom:28px; display:flex; align-items:center; gap:16px; }
+.vd-power-hint .hint-text { flex:1; font-size:14px; line-height:1.5; opacity:.85; }
+.vd-power-hint strong { color:var(--teal); }
+.vd-power-hint kbd { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.2); border-radius:6px; padding:3px 8px; font-size:12px; font-family:inherit; }
+.vd-open-palette { background:var(--teal); color:var(--ink); padding:10px 20px; border-radius:99px; font-weight:700; font-size:13px; flex-shrink:0; cursor:pointer; border:0; }
+.vd-open-palette:hover { background:var(--teal-2); }
+/* Palette overlay */
+.vd-palette-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:500; display:none; align-items:flex-start; justify-content:center; padding-top:120px; }
+.vd-palette-overlay.open { display:flex; }
+.vd-palette-box { background:#1a1c22; border-radius:16px; width:100%; max-width:640px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,.5); }
+.vd-palette-input-row { display:flex; align-items:center; gap:12px; padding:18px 20px; border-bottom:1px solid #2a2c33; }
+.vd-palette-input-row svg { color:#6b7280; flex-shrink:0; }
+.vd-palette-input { background:transparent; border:0; outline:0; color:#fff; font-size:16px; font-family:inherit; font-weight:500; flex:1; }
+.vd-palette-input::placeholder { color:#4b5563; }
+.vd-parsed { display:flex; flex-wrap:wrap; gap:6px; padding:12px 18px; border-bottom:1px solid #2a2c33; min-height:44px; }
+.vd-token { padding:4px 10px; border-radius:6px; font-size:12px; font-weight:700; }
+.vd-token.sport { background:#3b1a0a; color:#f97316; }
+.vd-token.format { background:#1a2b4a; color:#60a5fa; }
+.vd-token.template { background:#1a3027; color:var(--teal); }
+.vd-token.slate { background:#2a2060; color:#a78bfa; }
+.vd-palette-suggestions { padding:8px; max-height:240px; overflow-y:auto; }
+.vd-sugg { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; cursor:pointer; color:#d1d5db; font-size:13px; }
+.vd-sugg:hover, .vd-sugg.active { background:#2a2c33; color:#fff; }
+.vd-sugg .sugg-ico { font-size:18px; width:24px; text-align:center; }
+.vd-sugg .sugg-detail { font-size:11px; color:#6b7280; margin-left:auto; }
+.vd-palette-actions { padding:12px 18px; border-top:1px solid #2a2c33; display:flex; justify-content:space-between; align-items:center; }
+.vd-palette-create { background:var(--teal); color:var(--ink); padding:10px 20px; border-radius:8px; font-weight:700; font-size:13px; border:0; cursor:pointer; }
+.vd-palette-create:disabled { opacity:.4; cursor:default; }
+/* Form fallback */
+.vd-form { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px; }
+.vd-form-section { margin-bottom:24px; }
+.vd-form-section h3 { font-size:15px; font-weight:700; margin:0 0 12px; }
+.vd-row-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.vd-sel-card { border:2px solid var(--line); border-radius:10px; padding:12px 14px; cursor:pointer; transition:all .15s; background:#fff; text-align:center; }
+.vd-sel-card:hover { border-color:var(--line-strong); }
+.vd-sel-card.active { border-color:var(--teal); background:var(--teal-soft); }
+.vd-sel-card .vd-card-ico { font-size:22px; margin-bottom:4px; }
+.vd-sel-card .vd-card-lbl { font-size:12px; font-weight:700; }
+.vd-sel-card.disabled { opacity:.4; pointer-events:none; }
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -650,243 +701,101 @@
     </div>
   </div>
 </div>
-<!-- CREATE STEP: Sport picker -->
-<div class="screen" id="screen-create-sport">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('lobby')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
-  </div>
-  <div class="create-progress">
-    <div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-shell">
-      <h1 class="stage-title">Pick your sport</h1>
-      <p class="stage-sub">We'll auto-fill the rest based on what's live this week. You can always change it later.</p>
-      <div class="sport-grid" id="sportGrid">
-        <div class="sport-card sport-nba" data-sport="nba" onclick="selectSport('nba')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><circle cx="20" cy="20" r="18" fill="#fff"/><circle cx="80" cy="60" r="14" fill="#fff"/><circle cx="50" cy="90" r="22" fill="#fff"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏀</div><div class="check">✓</div></div>
-            <div><div class="name">NBA</div><div class="formats">4 formats · Playoffs in progress</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-pga" data-sport="pga" onclick="selectSport('pga')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><circle cx="80" cy="80" r="6" fill="#fff"/><path d="M20 20 L40 40 L20 60 Z" fill="#fff"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">⛳</div><div class="check">✓</div></div>
-            <div><div class="name">PGA</div><div class="formats">3 formats · Tour active</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-mlb" data-sport="mlb" onclick="selectSport('mlb')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><path d="M10 50 Q30 30 50 50 T90 50" stroke="#fff" stroke-width="3" fill="none"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">⚾</div><div class="check">✓</div></div>
-            <div><div class="name">MLB</div><div class="formats">5 formats · Mid-season</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-nfl sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏈</div></div>
-            <div><div class="name">NFL</div><div class="formats">Returns in September</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-nhl sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏒</div></div>
-            <div><div class="name">NHL</div><div class="formats">Stanley Cup playoffs</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-mma sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🥊</div></div>
-            <div><div class="name">UFC</div><div class="formats">Next event Saturday</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('lobby')">Cancel</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 1 of 5 · Click a sport to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
-  </div>
-</div>
 
-<!-- CREATE STEP: Format picker -->
-<div class="screen" id="screen-create-format">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-sport')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
-  </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-narrow">
-      <h1 class="stage-title">Pick a game format</h1>
-      <p class="stage-sub">How do you want people to play? You can change this anytime before the contest goes live.</p>
-      <div class="format-grid">
-        <div class="format-card" data-format="tiers" onclick="selectFormat('tiers')">
-          <div class="preview">🎯</div>
-          <div class="info">
-            <h3>Tiers <span class="badge-pop">POPULAR</span></h3>
-            <p>Pick one player from each tier. Highest combined fantasy score wins.</p>
-            <span class="tag">⏱ 5 min to enter</span><span class="tag">💎 Skill-based</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="pickem" onclick="selectFormat('pickem')">
-          <div class="preview">✓</div>
-          <div class="info">
-            <h3>Pick'em</h3>
-            <p>Pick which team or player wins each matchup. Most correct picks wins.</p>
-            <span class="tag">⏱ 2 min</span><span class="tag">🎲 Casual</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="survivor" onclick="selectFormat('survivor')">
-          <div class="preview">🛡️</div>
-          <div class="info">
-            <h3>Survivor</h3>
-            <p>Pick one team per round. If they lose, you're out. Last one standing wins.</p>
-            <span class="tag">📅 Multi-week</span><span class="tag">🎯 Strategy</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="bestball" onclick="selectFormat('bestball')">
-          <div class="preview">🏆</div>
-          <div class="info">
-            <h3>Best Ball</h3>
-            <p>Draft a roster. We auto-start your highest scorers each week.</p>
-            <span class="tag">📅 Season-long</span><span class="tag">🤖 Auto-managed</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-sport')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 2 of 5 · Click a format to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
-  </div>
-</div>
-<!-- CREATE STEP: Template picker -->
-<div class="screen" id="screen-create-template">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-format')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
-  </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-narrow">
-      <h1 class="stage-title">Start from a template</h1>
-      <p class="stage-sub">Pre-built tier setups so you don't have to build from scratch. You can tweak everything in the next step.</p>
-      <div class="template-grid">
-        <div class="template-card" data-template="classic" onclick="selectTemplate('classic')">
-          <div class="head"><div><div class="ttl">Classic 6 Tiers</div><div class="desc">Stars to deep cuts · 7 players each</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Stars</span><span class="tier-pill">Studs</span><span class="tier-pill">Mid</span>
-            <span class="tier-pill">Sleepers</span><span class="tier-pill">Deep</span><span class="tier-pill">Lottery</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="star" onclick="selectTemplate('star')">
-          <div class="head"><div><div class="ttl">Star + Studs</div><div class="desc">5 tiers, narrow at the top</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Star (5)</span><span class="tier-pill">Stud (8)</span><span class="tier-pill">Mid (8)</span>
-            <span class="tier-pill">Sleeper (10)</span><span class="tier-pill">Deep (10)</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="flex" onclick="selectTemplate('flex')">
-          <div class="head"><div><div class="ttl">Flex 4-Tier</div><div class="desc">Quick to fill, more lineup variety</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Anchor</span><span class="tier-pill">Co-star</span><span class="tier-pill">Glue guy</span><span class="tier-pill">Wildcard</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="deep" onclick="selectTemplate('deep')">
-          <div class="head"><div><div class="ttl">Deep Cuts (8)</div><div class="desc">For the degens — every player matters</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">T1</span><span class="tier-pill">T2</span><span class="tier-pill">T3</span><span class="tier-pill">T4</span>
-            <span class="tier-pill">T5</span><span class="tier-pill">T6</span><span class="tier-pill">T7</span><span class="tier-pill">T8</span>
-          </div>
-        </div>
-        <div class="template-card custom" data-template="custom" onclick="selectTemplate('custom')">
-          <div class="head"><div><div class="ttl">Build from scratch</div><div class="desc">Full control over tiers, names, and pool sizes</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Customize everything</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-format')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 3 of 5 · Click a template to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
-  </div>
-</div>
+<!-- ═══ VARIANT D: Command Palette + Form ═══ -->
+<div class="screen" id="screen-vd-create" style="background:var(--bg);min-height:calc(100vh - 64px);padding-top:64px;">
+  <div class="vd-shell">
 
-<!-- CREATE STEP: Settings (size, entries, slate) -->
-<div class="screen" id="screen-create-settings">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-template')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
-  </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-narrow">
-      <h1 class="stage-title">Set the rules</h1>
-      <p class="stage-sub">Schedule and entry limits. No money decisions yet — that comes after.</p>
-      <div class="feature-section">
-        <h3>Schedule</h3>
-        <p class="feature-help">Which slate are you running this for?</p>
-        <div class="pill-grid cols-4">
+    <!-- Power mode hint -->
+    <div class="vd-power-hint">
+      <div class="hint-text">
+        <strong>Power mode:</strong> Hit <kbd>⌘K</kbd> and type <strong>"nba tiers today classic"</strong> to create a contest in seconds.
+      </div>
+      <button class="vd-open-palette" onclick="vdOpenPalette()">⌘K  Open palette</button>
+    </div>
+
+    <!-- Traditional form fallback -->
+    <div class="vd-form">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink-3);margin-bottom:20px;">Or use the form</div>
+
+      <div class="vd-form-section">
+        <h3>Sport</h3>
+        <div class="vd-row-3">
+          <button class="vd-sel-card" onclick="vdFormPick('sport','nba',this)"><div class="vd-card-ico">🏀</div><div class="vd-card-lbl">NBA</div></button>
+          <button class="vd-sel-card" onclick="vdFormPick('sport','pga',this)"><div class="vd-card-ico">⛳</div><div class="vd-card-lbl">PGA</div></button>
+          <button class="vd-sel-card" onclick="vdFormPick('sport','mlb',this)"><div class="vd-card-ico">⚾</div><div class="vd-card-lbl">MLB</div></button>
+          <button class="vd-sel-card disabled"><div class="vd-card-ico">🏈</div><div class="vd-card-lbl">NFL</div></button>
+          <button class="vd-sel-card disabled"><div class="vd-card-ico">🏒</div><div class="vd-card-lbl">NHL</div></button>
+          <button class="vd-sel-card disabled"><div class="vd-card-ico">🥊</div><div class="vd-card-lbl">UFC</div></button>
+        </div>
+      </div>
+
+      <div class="vd-form-section">
+        <h3>Format</h3>
+        <div class="vd-row-3">
+          <button class="vd-sel-card" onclick="vdFormPick('format','tiers',this)"><div class="vd-card-ico">🎯</div><div class="vd-card-lbl">Tiers</div></button>
+          <button class="vd-sel-card" onclick="vdFormPick('format','pickem',this)"><div class="vd-card-ico">✅</div><div class="vd-card-lbl">Pick'em</div></button>
+          <button class="vd-sel-card" onclick="vdFormPick('format','survivor',this)"><div class="vd-card-ico">🛡️</div><div class="vd-card-lbl">Survivor</div></button>
+        </div>
+      </div>
+
+      <div class="vd-form-section">
+        <h3>Template</h3>
+        <div class="vd-row-3">
+          <button class="vd-sel-card" onclick="vdFormPick('template','classic',this)"><div class="vd-card-ico">⭐</div><div class="vd-card-lbl">Classic 6</div></button>
+          <button class="vd-sel-card" onclick="vdFormPick('template','star',this)"><div class="vd-card-ico">💎</div><div class="vd-card-lbl">Star+Studs</div></button>
+          <button class="vd-sel-card" onclick="vdFormPick('template','flex',this)"><div class="vd-card-ico">🔀</div><div class="vd-card-lbl">Flex 4</div></button>
+          <button class="vd-sel-card" onclick="vdFormPick('template','deep',this)"><div class="vd-card-ico">🎲</div><div class="vd-card-lbl">Deep Cuts</div></button>
+          <button class="vd-sel-card" onclick="vdFormPick('template','custom',this)"><div class="vd-card-ico">✨</div><div class="vd-card-lbl">Custom</div></button>
+        </div>
+      </div>
+
+      <div class="vd-form-section">
+        <h3>Slate</h3>
+        <div class="vd-row-3">
           <div class="day-card" data-day="0"><div class="d">Today</div><div class="dt">Wed, May 6</div></div>
           <div class="day-card" data-day="1"><div class="d">Tomorrow</div><div class="dt">Thu, May 7</div></div>
           <div class="day-card" data-day="2"><div class="d">Friday</div><div class="dt">Fri, May 8</div></div>
           <div class="day-card" data-day="3"><div class="d">Saturday</div><div class="dt">Sat, May 9</div></div>
         </div>
-        <div class="pill-grid cols-2 mt-12">
-          <div class="pill" data-games="all">All games on selected day</div>
-          <div class="pill" data-games="prime">Prime time only (8 PM ET+)</div>
-        </div>
       </div>
-      <div class="feature-section">
+
+      <div class="vd-form-section">
         <h3>Entries per user</h3>
-        <p class="feature-help">How many lineups can each person submit? Total contest entries are unlimited — anyone with the link can join.</p>
         <div class="pill-grid cols-5">
-          <div class="pill active" data-limit="1">1 each</div>
-          <div class="pill" data-limit="5">5 each</div>
-          <div class="pill" data-limit="10">10 each</div>
-          <div class="pill" data-limit="unlimited">Unlimited</div>
-          <div class="pill" data-limit="custom">Custom</div>
+          <div class="pill active" data-limit="1">1</div>
+          <div class="pill" data-limit="5">5</div>
+          <div class="pill" data-limit="10">10</div>
+          <div class="pill" data-limit="unlimited">∞</div>
         </div>
       </div>
+
+      <button class="btn btn-primary btn-xl" id="vd-form-create" style="width:100%;opacity:.4;pointer-events:none;" onclick="vdFormCreate()">Create contest →</button>
     </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-template')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 4 of 5</span></div>
-    <div class="right"><button class="btn btn-primary btn-lg" onclick="goToTiersOrConfirm()">Continue →</button></div>
   </div>
 </div>
 
-<!-- CREATE STEP: Tier customizer (only if template = custom) -->
-<div class="screen" id="screen-create-tiers">
+<!-- Command palette overlay -->
+<div class="vd-palette-overlay" id="vd-palette-overlay" onclick="if(event.target===this)vdClosePalette()">
+  <div class="vd-palette-box">
+    <div class="vd-palette-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="vd-palette-input" id="vd-palette-input" placeholder='Try "nba tiers today classic" …' oninput="vdParseInput(this.value)" />
+      <kbd style="background:#2a2c33;border:1px solid #3a3c43;border-radius:4px;padding:3px 8px;font-size:11px;color:#9ca3af;">esc</kbd>
+    </div>
+    <div class="vd-parsed" id="vd-parsed-tokens"></div>
+    <div class="vd-palette-suggestions" id="vd-suggestions">
+      <div class="vd-sugg"><span class="sugg-ico">🏀</span>nba tiers today classic<span class="sugg-detail">NBA · Tiers · Today · Classic 6</span></div>
+      <div class="vd-sugg"><span class="sugg-ico">⛳</span>pga tiers friday flex<span class="sugg-detail">PGA · Tiers · Friday · Flex 4</span></div>
+      <div class="vd-sugg"><span class="sugg-ico">⚾</span>mlb pickem tomorrow<span class="sugg-detail">MLB · Pick'em · Tomorrow</span></div>
+      <div class="vd-sugg"><span class="sugg-ico">🏀</span>nba survivor saturday deep cuts<span class="sugg-detail">NBA · Survivor · Saturday · Deep Cuts</span></div>
+    </div>
+    <div class="vd-palette-actions">
+      <span style="color:#6b7280;font-size:12px;" id="vd-palette-status">Start typing to build your contest</span>
+      <button class="vd-palette-create" id="vd-palette-create-btn" disabled onclick="vdPaletteCreate()">Create →</button>
+    </div>
+  </div>
+</div>
   <div class="create-titlebar">
     <button class="back" onclick="goTo('create-settings')">←</button>
     <div class="title">Create contest</div>
@@ -2954,3 +2863,68 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+<script>
+/* ── Variant D JS ── */
+let _vdParsed = {};
+const VD_SPORT_MAP = {nba:'nba',basketball:'nba',pga:'pga',golf:'pga',mlb:'mlb',baseball:'mlb'};
+const VD_FORMAT_MAP = {tiers:'tiers',tier:'tiers',pickem:'pickem','pick'em':'pickem',survivor:'survivor',bestball:'bestball','best ball':'bestball'};
+const VD_TPL_MAP = {classic:'classic','classic 6':'classic',star:'star','star+studs':'star',studs:'star',flex:'flex','flex 4':'flex',deep:'deep','deep cuts':'deep',custom:'custom'};
+const VD_DAY_MAP = {today:'0',tomorrow:'1',friday:'2',saturday:'3',wed:'0',thu:'1',fri:'2',sat:'3'};
+function startCreate(){ _vdParsed={}; goTo('screen-vd-create'); }
+function vdOpenPalette(){ document.getElementById('vd-palette-overlay').classList.add('open'); document.getElementById('vd-palette-input').focus(); }
+function vdClosePalette(){ document.getElementById('vd-palette-overlay').classList.remove('open'); }
+function vdParseInput(v){
+  _vdParsed = {};
+  const words = v.toLowerCase().split(/[\s,]+/);
+  for(let w of words){
+    if(VD_SPORT_MAP[w]) _vdParsed.sport = VD_SPORT_MAP[w];
+    if(VD_FORMAT_MAP[w]) _vdParsed.format = VD_FORMAT_MAP[w];
+    if(VD_TPL_MAP[w]) _vdParsed.template = VD_TPL_MAP[w];
+    if(VD_DAY_MAP[w]) _vdParsed.day = +VD_DAY_MAP[w];
+  }
+  // Render tokens
+  const tEl = document.getElementById('vd-parsed-tokens');
+  let html = '';
+  if(_vdParsed.sport) html += `<span class="vd-token sport">${{nba:'🏀 NBA',pga:'⛳ PGA',mlb:'⚾ MLB'}[_vdParsed.sport]||_vdParsed.sport}</span>`;
+  if(_vdParsed.format) html += `<span class="vd-token format">${{tiers:'Tiers',pickem:"Pick'em",survivor:'Survivor',bestball:'Best Ball'}[_vdParsed.format]||_vdParsed.format}</span>`;
+  if(_vdParsed.template) html += `<span class="vd-token template">${{classic:'Classic 6',star:'Star+Studs',flex:'Flex 4',deep:'Deep Cuts',custom:'Custom'}[_vdParsed.template]||_vdParsed.template}</span>`;
+  if(_vdParsed.day!=null) html += `<span class="vd-token slate">${['Today','Tomorrow','Friday','Saturday'][_vdParsed.day]}</span>`;
+  tEl.innerHTML = html || '<span style="color:#4b5563;font-size:12px;">type sport, format, template, day…</span>';
+  const done = _vdParsed.sport && _vdParsed.format;
+  const btn = document.getElementById('vd-palette-create-btn'); btn.disabled = !done;
+  document.getElementById('vd-palette-status').textContent = done ? 'Ready to create' : `Need: ${!_vdParsed.sport?'sport ':''} ${!_vdParsed.format?'format':''}`.trim();
+}
+function vdPaletteCreate(){
+  state.sport = _vdParsed.sport || 'nba';
+  state.format = _vdParsed.format || 'tiers';
+  state.template = _vdParsed.template || 'classic';
+  if(_vdParsed.day != null){ state.slate.day = _vdParsed.day; state.slate.dayLabel = ['Wed, May 6','Thu, May 7','Fri, May 8','Sat, May 9'][_vdParsed.day]+' 2026'; }
+  if(state.template !== 'custom') applyTemplate(state.template);
+  vdClosePalette();
+  goTo('create-confirm');
+}
+function vdFormPick(field, val, btn){
+  state[field] = field==='template'? val : val;
+  const section = btn.closest('.vd-form-section');
+  section.querySelectorAll('.vd-sel-card').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  vdCheckFormReady();
+}
+function vdCheckFormReady(){
+  const ok = state.sport && state.format && state.template;
+  const btn = document.getElementById('vd-form-create');
+  btn.style.opacity = ok?'1':'0.4'; btn.style.pointerEvents = ok?'auto':'none';
+}
+function vdFormCreate(){
+  if(!state.sport || !state.format || !state.template) return;
+  if(state.template !== 'custom') applyTemplate(state.template);
+  if(state.template === 'custom'){ seedTiersFromTemplate('custom'); goTo('create-tiers'); }
+  else goTo('create-confirm');
+}
+// Cmd+K listener
+document.addEventListener('keydown', e=>{ if((e.metaKey||e.ctrlKey) && e.key==='k'){ e.preventDefault(); if(document.querySelector('.screen.active')?.id==='screen-vd-create') vdOpenPalette(); } if(e.key==='Escape') vdClosePalette(); });
+// Click suggestions
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.querySelectorAll('.vd-sugg').forEach(s=>{ s.addEventListener('click',()=>{ const input=document.getElementById('vd-palette-input'); const txt=s.querySelector(':not(.sugg-ico):not(.sugg-detail)').textContent; input.value=txt; vdParseInput(txt); }); });
+});
+</script>
