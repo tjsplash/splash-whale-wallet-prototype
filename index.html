@@ -1,3 +1,12 @@
+<!--
+  VARIANT C — Template gallery first
+  Interaction pattern: Skip the linear wizard entirely. Open with a rich gallery of
+  pre-built contest templates. Each card shows sport, format, tier setup, and sample
+  entry count. Click one → 90% configured. User only confirms the slate, then creates.
+  "Start from scratch" is an option at the bottom.
+  Tradeoff being tested: most commissioners copy what works vs. gallery requires
+  recognizing a good starting point rather than building from first principles.
+-->
 <!doctype html>
 <html lang="en">
 <head>
@@ -610,6 +619,27 @@
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 10px; z-index: 300; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .25s; }
   .toast.show { opacity: 1; }
 </style>
+<style>
+/* ── Variant C overrides ── */
+.vc-header { padding:32px 28px 20px; max-width:1200px; margin:0 auto; width:100%; }
+.vc-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; padding:0 28px 120px; max-width:1200px; margin:0 auto; }
+.vc-card { background:var(--card); border:2px solid var(--line); border-radius:16px; overflow:hidden; cursor:pointer; transition:all .18s; position:relative; }
+.vc-card:hover { border-color:var(--teal); transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,0,0,.08); }
+.vc-card.selected { border-color:var(--teal); box-shadow:0 0 0 4px rgba(20,224,200,.18); }
+.vc-card-banner { height:80px; display:flex; align-items:center; padding:0 18px; gap:12px; }
+.vc-card-body { padding:16px 18px; }
+.vc-card h3 { margin:0 0 4px; font-size:16px; font-weight:700; }
+.vc-card p { margin:0 0 12px; font-size:12px; color:var(--ink-2); line-height:1.5; }
+.vc-card .vc-tiers { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:12px; }
+.vc-card .vc-tier-chip { background:var(--bg); color:var(--ink-2); padding:3px 9px; border-radius:6px; font-size:11px; font-weight:600; }
+.vc-card .vc-meta { display:flex; gap:12px; font-size:11px; color:var(--ink-3); font-weight:600; }
+.vc-card .vc-badge { position:absolute; top:10px; right:10px; background:rgba(0,0,0,.4); color:#fff; padding:3px 8px; border-radius:99px; font-size:10px; font-weight:700; }
+.vc-scratch { margin:0 28px 40px; max-width:1200px; }
+.vc-scratch button { width:100%; padding:16px; border:2px dashed var(--line-strong); border-radius:12px; font-weight:600; color:var(--ink-2); font-size:14px; background:transparent; cursor:pointer; }
+.vc-scratch button:hover { border-color:var(--teal); color:var(--teal-ink); background:var(--teal-soft); }
+/* Settings overlay */
+.vc-settings-panel { background:var(--card); border:1px solid var(--line); border-radius:14px; max-width:560px; margin:0 auto; padding:28px; }
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -650,224 +680,102 @@
     </div>
   </div>
 </div>
-<!-- CREATE STEP: Sport picker -->
-<div class="screen" id="screen-create-sport">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('lobby')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
+
+<!-- ═══ VARIANT C: Template Gallery First ═══ -->
+<div class="screen" id="screen-vc-gallery" style="background:var(--bg);min-height:calc(100vh - 64px);padding-top:64px;">
+  <div class="vc-header">
+    <h1 style="font-size:30px;font-weight:800;margin:0 0 6px;">Start with a template</h1>
+    <p style="color:var(--ink-2);margin:0 0 20px;">Click any template to get 90% of the way there instantly.</p>
   </div>
-  <div class="create-progress">
-    <div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-shell">
-      <h1 class="stage-title">Pick your sport</h1>
-      <p class="stage-sub">We'll auto-fill the rest based on what's live this week. You can always change it later.</p>
-      <div class="sport-grid" id="sportGrid">
-        <div class="sport-card sport-nba" data-sport="nba" onclick="selectSport('nba')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><circle cx="20" cy="20" r="18" fill="#fff"/><circle cx="80" cy="60" r="14" fill="#fff"/><circle cx="50" cy="90" r="22" fill="#fff"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏀</div><div class="check">✓</div></div>
-            <div><div class="name">NBA</div><div class="formats">4 formats · Playoffs in progress</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-pga" data-sport="pga" onclick="selectSport('pga')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><circle cx="80" cy="80" r="6" fill="#fff"/><path d="M20 20 L40 40 L20 60 Z" fill="#fff"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">⛳</div><div class="check">✓</div></div>
-            <div><div class="name">PGA</div><div class="formats">3 formats · Tour active</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-mlb" data-sport="mlb" onclick="selectSport('mlb')">
-          <div class="bg"></div>
-          <div class="pattern"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;"><path d="M10 50 Q30 30 50 50 T90 50" stroke="#fff" stroke-width="3" fill="none"/></svg></div>
-          <div class="live-pill"><span class="dot"></span>LIVE NOW</div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">⚾</div><div class="check">✓</div></div>
-            <div><div class="name">MLB</div><div class="formats">5 formats · Mid-season</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-nfl sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏈</div></div>
-            <div><div class="name">NFL</div><div class="formats">Returns in September</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-nhl sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🏒</div></div>
-            <div><div class="name">NHL</div><div class="formats">Stanley Cup playoffs</div></div>
-          </div>
-        </div>
-        <div class="sport-card sport-mma sport-coming-soon">
-          <div class="bg"></div>
-          <div class="content">
-            <div class="meta"><div class="icon-big">🥊</div></div>
-            <div><div class="name">UFC</div><div class="formats">Next event Saturday</div></div>
-          </div>
-        </div>
+  <div class="vc-grid">
+    <div class="vc-card" data-sport="nba" data-format="tiers" data-template="classic" onclick="vcSelectTemplate(this)">
+      <div class="vc-card-banner" style="background:linear-gradient(135deg,#ea580c,#b91c1c)">
+        <span style="font-size:32px;">🏀</span>
+        <div style="color:#fff;"><div style="font-size:11px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.8px;">NBA · TIERS</div><div style="font-size:15px;font-weight:800;">Wednesday Night NBA Tiers</div></div>
+      </div>
+      <div class="vc-card-body">
+        <p>Stars to deep cuts, classic format</p>
+        <div class="vc-tiers"><span class="vc-tier-chip">Stars</span><span class="vc-tier-chip">Studs</span><span class="vc-tier-chip">Mid</span><span class="vc-tier-chip">Sleepers</span><span class="vc-tier-chip">Deep</span><span class="vc-tier-chip">Lottery</span></div>
+        <div class="vc-meta"><span>🏅 6 tiers · 42 players</span><span>👤 ~12 avg entries</span></div>
+      </div>
+    </div><div class="vc-card" data-sport="nba" data-format="pickem" data-template="classic" onclick="vcSelectTemplate(this)">
+      <div class="vc-card-banner" style="background:linear-gradient(135deg,#7c3aed,#1e40af)">
+        <span style="font-size:32px;">🏀</span>
+        <div style="color:#fff;"><div style="font-size:11px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.8px;">NBA · PICKEM</div><div style="font-size:15px;font-weight:800;">Office Pool NBA Pick'em</div></div>
+      </div>
+      <div class="vc-card-body">
+        <p>Casual weekly office contest</p>
+        <div class="vc-tiers"><span class="vc-tier-chip">Stars</span><span class="vc-tier-chip">Studs</span><span class="vc-tier-chip">Mid</span><span class="vc-tier-chip">Sleepers</span><span class="vc-tier-chip">Deep</span><span class="vc-tier-chip">Lottery</span></div>
+        <div class="vc-meta"><span>🏅 No tiers needed</span><span>👤 ~47 avg entries</span></div>
+      </div>
+    </div><div class="vc-card" data-sport="pga" data-format="tiers" data-template="flex" onclick="vcSelectTemplate(this)">
+      <div class="vc-card-banner" style="background:linear-gradient(135deg,#15803d,#14532d)">
+        <span style="font-size:32px;">⛳</span>
+        <div style="color:#fff;"><div style="font-size:11px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.8px;">PGA · TIERS</div><div style="font-size:15px;font-weight:800;">PGA Friday Showdown</div></div>
+      </div>
+      <div class="vc-card-body">
+        <p>Flex format for weekend tournament</p>
+        <div class="vc-tiers"><span class="vc-tier-chip">Anchor</span><span class="vc-tier-chip">Co-star</span><span class="vc-tier-chip">Glue</span><span class="vc-tier-chip">Wildcard</span></div>
+        <div class="vc-meta"><span>🏅 4 tiers · 36 players</span><span>👤 ~8 avg entries</span></div>
+      </div>
+    </div><div class="vc-card" data-sport="mlb" data-format="tiers" data-template="star" onclick="vcSelectTemplate(this)">
+      <div class="vc-card-banner" style="background:linear-gradient(135deg,#1e3a8a,#b91c1c)">
+        <span style="font-size:32px;">⚾</span>
+        <div style="color:#fff;"><div style="font-size:11px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.8px;">MLB · TIERS</div><div style="font-size:15px;font-weight:800;">MLB Home Run Derby</div></div>
+      </div>
+      <div class="vc-card-body">
+        <p>Star + Studs for sluggers</p>
+        <div class="vc-tiers"><span class="vc-tier-chip">Star</span><span class="vc-tier-chip">Stud</span><span class="vc-tier-chip">Mid</span><span class="vc-tier-chip">Sleeper</span><span class="vc-tier-chip">Deep</span></div>
+        <div class="vc-meta"><span>🏅 5 tiers · 41 players</span><span>👤 ~22 avg entries</span></div>
+      </div>
+    </div><div class="vc-card" data-sport="nba" data-format="tiers" data-template="deep" onclick="vcSelectTemplate(this)">
+      <div class="vc-card-banner" style="background:linear-gradient(135deg,#0f172a,#1e3a8a)">
+        <span style="font-size:32px;">🏀</span>
+        <div style="color:#fff;"><div style="font-size:11px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.8px;">NBA · TIERS</div><div style="font-size:15px;font-weight:800;">NBA Deep Cuts Degen</div></div>
+      </div>
+      <div class="vc-card-body">
+        <p>For the degens — every player counts</p>
+        <div class="vc-tiers"><span class="vc-tier-chip">T1</span><span class="vc-tier-chip">T2</span><span class="vc-tier-chip">T3</span><span class="vc-tier-chip">T4</span><span class="vc-tier-chip">T5</span><span class="vc-tier-chip">T6</span><span class="vc-tier-chip">T7</span><span class="vc-tier-chip">T8</span></div>
+        <div class="vc-meta"><span>🏅 8 tiers · 40 players</span><span>👤 ~18 avg entries</span></div>
+      </div>
+    </div><div class="vc-card" data-sport="pga" data-format="pickem" data-template="flex" onclick="vcSelectTemplate(this)">
+      <div class="vc-card-banner" style="background:linear-gradient(135deg,#065f46,#14532d)">
+        <span style="font-size:32px;">⛳</span>
+        <div style="color:#fff;"><div style="font-size:11px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.8px;">PGA · PICKEM</div><div style="font-size:15px;font-weight:800;">PGA Masters-Style Pick'em</div></div>
+      </div>
+      <div class="vc-card-body">
+        <p>Multi-round elimination style</p>
+        <div class="vc-tiers"><span class="vc-tier-chip">Anchor</span><span class="vc-tier-chip">Co-star</span><span class="vc-tier-chip">Glue</span><span class="vc-tier-chip">Wildcard</span></div>
+        <div class="vc-meta"><span>🏅 Pick winners each round</span><span>👤 ~35 avg entries</span></div>
       </div>
     </div>
   </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('lobby')">Cancel</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 1 of 5 · Click a sport to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
+  <div class="vc-scratch">
+    <button onclick="vcScratch()">✨ Start from scratch — build tiers your way</button>
   </div>
 </div>
 
-<!-- CREATE STEP: Format picker -->
-<div class="screen" id="screen-create-format">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-sport')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
-  </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step active"></div><div class="step"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
+<!-- VC Settings (slate + entries) after template pick -->
+<div class="screen" id="screen-vc-settings" style="background:var(--bg);min-height:calc(100vh - 64px);padding-top:64px;">
+  <div class="create-bg" style="padding-top:32px;">
     <div class="stage-narrow">
-      <h1 class="stage-title">Pick a game format</h1>
-      <p class="stage-sub">How do you want people to play? You can change this anytime before the contest goes live.</p>
-      <div class="format-grid">
-        <div class="format-card" data-format="tiers" onclick="selectFormat('tiers')">
-          <div class="preview">🎯</div>
-          <div class="info">
-            <h3>Tiers <span class="badge-pop">POPULAR</span></h3>
-            <p>Pick one player from each tier. Highest combined fantasy score wins.</p>
-            <span class="tag">⏱ 5 min to enter</span><span class="tag">💎 Skill-based</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="pickem" onclick="selectFormat('pickem')">
-          <div class="preview">✓</div>
-          <div class="info">
-            <h3>Pick'em</h3>
-            <p>Pick which team or player wins each matchup. Most correct picks wins.</p>
-            <span class="tag">⏱ 2 min</span><span class="tag">🎲 Casual</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="survivor" onclick="selectFormat('survivor')">
-          <div class="preview">🛡️</div>
-          <div class="info">
-            <h3>Survivor</h3>
-            <p>Pick one team per round. If they lose, you're out. Last one standing wins.</p>
-            <span class="tag">📅 Multi-week</span><span class="tag">🎯 Strategy</span>
-          </div>
-        </div>
-        <div class="format-card" data-format="bestball" onclick="selectFormat('bestball')">
-          <div class="preview">🏆</div>
-          <div class="info">
-            <h3>Best Ball</h3>
-            <p>Draft a roster. We auto-start your highest scorers each week.</p>
-            <span class="tag">📅 Season-long</span><span class="tag">🤖 Auto-managed</span>
-          </div>
-        </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+        <div id="vc-selected-badge" style="padding:8px 16px;border-radius:99px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,#ea580c,#b91c1c);">🏀 NBA Tiers · Classic</div>
+        <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;" onclick="goTo('screen-vc-gallery')">Change template</button>
       </div>
-    </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-sport')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 2 of 5 · Click a format to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
-  </div>
-</div>
-<!-- CREATE STEP: Template picker -->
-<div class="screen" id="screen-create-template">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-format')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
-  </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-narrow">
-      <h1 class="stage-title">Start from a template</h1>
-      <p class="stage-sub">Pre-built tier setups so you don't have to build from scratch. You can tweak everything in the next step.</p>
-      <div class="template-grid">
-        <div class="template-card" data-template="classic" onclick="selectTemplate('classic')">
-          <div class="head"><div><div class="ttl">Classic 6 Tiers</div><div class="desc">Stars to deep cuts · 7 players each</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Stars</span><span class="tier-pill">Studs</span><span class="tier-pill">Mid</span>
-            <span class="tier-pill">Sleepers</span><span class="tier-pill">Deep</span><span class="tier-pill">Lottery</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="star" onclick="selectTemplate('star')">
-          <div class="head"><div><div class="ttl">Star + Studs</div><div class="desc">5 tiers, narrow at the top</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Star (5)</span><span class="tier-pill">Stud (8)</span><span class="tier-pill">Mid (8)</span>
-            <span class="tier-pill">Sleeper (10)</span><span class="tier-pill">Deep (10)</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="flex" onclick="selectTemplate('flex')">
-          <div class="head"><div><div class="ttl">Flex 4-Tier</div><div class="desc">Quick to fill, more lineup variety</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Anchor</span><span class="tier-pill">Co-star</span><span class="tier-pill">Glue guy</span><span class="tier-pill">Wildcard</span>
-          </div>
-        </div>
-        <div class="template-card" data-template="deep" onclick="selectTemplate('deep')">
-          <div class="head"><div><div class="ttl">Deep Cuts (8)</div><div class="desc">For the degens — every player matters</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">T1</span><span class="tier-pill">T2</span><span class="tier-pill">T3</span><span class="tier-pill">T4</span>
-            <span class="tier-pill">T5</span><span class="tier-pill">T6</span><span class="tier-pill">T7</span><span class="tier-pill">T8</span>
-          </div>
-        </div>
-        <div class="template-card custom" data-template="custom" onclick="selectTemplate('custom')">
-          <div class="head"><div><div class="ttl">Build from scratch</div><div class="desc">Full control over tiers, names, and pool sizes</div></div><div class="check"></div></div>
-          <div class="tier-strip">
-            <span class="tier-pill">Customize everything</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-format')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 3 of 5 · Click a template to continue</span></div>
-    <div class="right" style="min-width:120px;"></div>
-  </div>
-</div>
-
-<!-- CREATE STEP: Settings (size, entries, slate) -->
-<div class="screen" id="screen-create-settings">
-  <div class="create-titlebar">
-    <button class="back" onclick="goTo('create-template')">←</button>
-    <div class="title">Create contest</div>
-    <button class="close" onclick="confirmExitCreate()">✕</button>
-  </div>
-  <div class="create-progress">
-    <div class="step done"></div><div class="step done"></div><div class="step done"></div><div class="step active"></div><div class="step"></div>
-  </div>
-  <div class="create-bg">
-    <div class="stage-narrow">
-      <h1 class="stage-title">Set the rules</h1>
-      <p class="stage-sub">Schedule and entry limits. No money decisions yet — that comes after.</p>
+      <h1 class="stage-title" style="text-align:left;">One last thing</h1>
+      <p class="stage-sub" style="text-align:left;">Pick your slate and entry limit. No money decisions yet.</p>
       <div class="feature-section">
         <h3>Schedule</h3>
-        <p class="feature-help">Which slate are you running this for?</p>
         <div class="pill-grid cols-4">
           <div class="day-card" data-day="0"><div class="d">Today</div><div class="dt">Wed, May 6</div></div>
           <div class="day-card" data-day="1"><div class="d">Tomorrow</div><div class="dt">Thu, May 7</div></div>
           <div class="day-card" data-day="2"><div class="d">Friday</div><div class="dt">Fri, May 8</div></div>
           <div class="day-card" data-day="3"><div class="d">Saturday</div><div class="dt">Sat, May 9</div></div>
         </div>
-        <div class="pill-grid cols-2 mt-12">
-          <div class="pill" data-games="all">All games on selected day</div>
-          <div class="pill" data-games="prime">Prime time only (8 PM ET+)</div>
-        </div>
       </div>
       <div class="feature-section">
         <h3>Entries per user</h3>
-        <p class="feature-help">How many lineups can each person submit? Total contest entries are unlimited — anyone with the link can join.</p>
         <div class="pill-grid cols-5">
           <div class="pill active" data-limit="1">1 each</div>
           <div class="pill" data-limit="5">5 each</div>
@@ -879,14 +787,11 @@
     </div>
   </div>
   <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('create-template')">← Back</button></div>
-    <div class="center"><span class="text-muted" style="font-size:13px;">Step 4 of 5</span></div>
-    <div class="right"><button class="btn btn-primary btn-lg" onclick="goToTiersOrConfirm()">Continue →</button></div>
+    <div class="left"><button class="btn btn-ghost" onclick="goTo('screen-vc-gallery')">← Change template</button></div>
+    <div class="center"><span class="text-muted" style="font-size:13px;">Almost done</span></div>
+    <div class="right"><button class="btn btn-primary btn-xl" onclick="vcCreateContest()">Create contest →</button></div>
   </div>
 </div>
-
-<!-- CREATE STEP: Tier customizer (only if template = custom) -->
-<div class="screen" id="screen-create-tiers">
   <div class="create-titlebar">
     <button class="back" onclick="goTo('create-settings')">←</button>
     <div class="title">Create contest</div>
@@ -2954,3 +2859,28 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+<script>
+/* ── Variant C JS ── */
+const VC_SPORT_LABELS = {nba:'🏀 NBA', pga:'⛳ PGA', mlb:'⚾ MLB'};
+const VC_FORMAT_LABELS = {tiers:'Tiers', pickem:"Pick'em", survivor:'Survivor', bestball:'Best Ball'};
+const VC_TEMPLATE_LABELS = {classic:'Classic 6', star:'Star+Studs', flex:'Flex 4', deep:'Deep Cuts', custom:'Custom'};
+const VC_SPORT_BGS = {nba:'linear-gradient(135deg,#ea580c,#b91c1c)', pga:'linear-gradient(135deg,#15803d,#14532d)', mlb:'linear-gradient(135deg,#1e3a8a,#b91c1c)'};
+function startCreate() { goTo('screen-vc-gallery'); }
+function vcSelectTemplate(card){
+  const sport = card.dataset.sport, fmt = card.dataset.format, tpl = card.dataset.template;
+  state.sport = sport; state.format = fmt; state.template = tpl;
+  if(tpl !== 'custom') applyTemplate(tpl);
+  // Update badge in settings
+  const badge = document.getElementById('vc-selected-badge');
+  if(badge){ badge.textContent = (VC_SPORT_LABELS[sport]||sport)+' · '+(VC_FORMAT_LABELS[fmt]||fmt)+' · '+(VC_TEMPLATE_LABELS[tpl]||tpl); badge.style.background = VC_SPORT_BGS[sport]||'var(--ink)'; }
+  goTo('screen-vc-settings');
+}
+function vcScratch(){
+  state.sport='nba'; state.format='tiers'; state.template='custom';
+  seedTiersFromTemplate('custom'); goTo('create-tiers');
+}
+function vcCreateContest(){
+  if(state.template==='custom') applyTemplate('custom');
+  goTo('create-confirm');
+}
+</script>
