@@ -2896,7 +2896,7 @@ const VB_TIER_TEMPLATES = {
   custom:[['Tier 1','?'],['Tier 2','?'],['Tier 3','?'],['...','?']]
 };
 let vbCurrentStep = 1, vbDayPicked = false, vbLimitPicked = false;
-function startCreate() { vbCurrentStep=1; vbDayPicked=false; vbLimitPicked=false; vbRender(); goTo('screen-vb-create'); }
+function startCreate() { vbCurrentStep=1; vbDayPicked=false; vbLimitPicked=false; vbRender(); goTo('vb-create'); }
 function vbRender() {
   for(let i=1;i<=4;i++){
     document.getElementById('vb-pane-'+i)?.classList.toggle('active', i===vbCurrentStep);

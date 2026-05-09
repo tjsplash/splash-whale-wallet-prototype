@@ -743,7 +743,7 @@
     </div>
   </div>
   <div class="va-footer">
-    <button class="btn btn-ghost" onclick="goTo('screen-va-sport')">← Back</button>
+    <button class="btn btn-ghost" onclick="goTo('va-sport')">← Back</button>
     <div class="va-hint"><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;·&nbsp; <kbd>Enter</kbd> select</div>
     <div style="min-width:80px;"></div>
   </div>
@@ -780,7 +780,7 @@
     </div>
   </div>
   <div class="va-footer">
-    <button class="btn btn-ghost" onclick="goTo('screen-va-format')">← Back</button>
+    <button class="btn btn-ghost" onclick="goTo('va-format')">← Back</button>
     <div class="va-hint"><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;·&nbsp; <kbd>Enter</kbd> select</div>
     <div style="min-width:80px;"></div>
   </div>
@@ -831,7 +831,7 @@
     </div>
   </div>
   <div class="va-footer">
-    <button class="btn btn-ghost" onclick="goTo('screen-va-template')">← Back</button>
+    <button class="btn btn-ghost" onclick="goTo('va-template')">← Back</button>
     <div class="va-hint">Select a day and entry limit to continue</div>
     <button class="btn btn-primary btn-lg" id="va-settings-next" style="opacity:.4;pointer-events:none;" onclick="vaSettingsDone()">Continue →</button>
   </div>
@@ -2905,20 +2905,20 @@ document.addEventListener('DOMContentLoaded', () => {
 </html>
 <script>
 /* ── Variant A JS ── */
-function startCreate() { vaReset(); goTo('screen-va-sport'); }
+function startCreate() { vaReset(); goTo('va-sport'); }
 var _vaDay = null, _vaLimit = null;
 function vaReset() { _vaDay = null; _vaLimit = null; }
 function vaSelectSport(s) {
   state.sport = s;
   document.querySelectorAll('#screen-va-sport .va-choice').forEach(c => c.classList.remove('selected'));
   document.querySelector(`#screen-va-sport .va-choice[data-v="${s}"]`)?.classList.add('selected');
-  setTimeout(() => goTo('screen-va-format'), 260);
+  setTimeout(() => goTo('va-format'), 260);
 }
 function vaSelectFormat(f) {
   state.format = f;
   document.querySelectorAll('#screen-va-format .va-choice').forEach(c => c.classList.remove('selected'));
   document.querySelector(`#screen-va-format .va-choice[data-v="${f}"]`)?.classList.add('selected');
-  setTimeout(() => goTo('screen-va-template'), 260);
+  setTimeout(() => goTo('va-template'), 260);
 }
 function vaSelectTemplate(t) {
   state.template = t;
@@ -2926,7 +2926,7 @@ function vaSelectTemplate(t) {
   document.querySelector(`#screen-va-template .va-choice[data-v="${t}"]`)?.classList.add('selected');
   setTimeout(() => {
     if (t === 'custom') { seedTiersFromTemplate('custom'); goTo('create-tiers'); }
-    else goTo('screen-va-settings');
+    else goTo('va-settings');
   }, 260);
 }
 function vaSelectDay(d, btn) {

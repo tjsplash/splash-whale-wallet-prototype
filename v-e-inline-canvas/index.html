@@ -2948,7 +2948,7 @@ const VE_SPORT_LABELS={nba:'🏀 NBA',pga:'⛳ PGA',mlb:'⚾ MLB'};
 const VE_FORMAT_LABELS={tiers:'Tiers',pickem:"Pick'em",survivor:'Survivor',bestball:'Best Ball'};
 const VE_TPL_LABELS={classic:'Classic 6 Tiers',star:'Star+Studs',flex:'Flex 4-Tier',deep:'Deep Cuts (8)',custom:'Custom'};
 const VE_SPORT_BGS={nba:'linear-gradient(135deg,#ea580c,#b91c1c)',pga:'linear-gradient(135deg,#15803d,#14532d)',mlb:'linear-gradient(135deg,#1e3a8a,#b91c1c)'};
-function startCreate(){ _veSportPick=null;_veFormatPick=null;_veTplPick=null;_veDayPick=null; veUpdateProgress(); goTo('screen-ve-canvas'); }
+function startCreate(){ _veSportPick=null;_veFormatPick=null;_veTplPick=null;_veDayPick=null; veUpdateProgress(); goTo('ve-canvas'); }
 function veOpenDrawer(which){
   _veActiveDrawer=which;
   document.getElementById('ve-drawer-bg').classList.add('open');

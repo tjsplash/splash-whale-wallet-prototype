@@ -2870,7 +2870,7 @@ const VD_SPORT_MAP = {nba:'nba',basketball:'nba',pga:'pga',golf:'pga',mlb:'mlb',
 const VD_FORMAT_MAP = {tiers:'tiers',tier:'tiers',pickem:'pickem','pick'em':'pickem',survivor:'survivor',bestball:'bestball','best ball':'bestball'};
 const VD_TPL_MAP = {classic:'classic','classic 6':'classic',star:'star','star+studs':'star',studs:'star',flex:'flex','flex 4':'flex',deep:'deep','deep cuts':'deep',custom:'custom'};
 const VD_DAY_MAP = {today:'0',tomorrow:'1',friday:'2',saturday:'3',wed:'0',thu:'1',fri:'2',sat:'3'};
-function startCreate(){ _vdParsed={}; goTo('screen-vd-create'); }
+function startCreate(){ _vdParsed={}; goTo('vd-create'); }
 function vdOpenPalette(){ document.getElementById('vd-palette-overlay').classList.add('open'); document.getElementById('vd-palette-input').focus(); }
 function vdClosePalette(){ document.getElementById('vd-palette-overlay').classList.remove('open'); }
 function vdParseInput(v){

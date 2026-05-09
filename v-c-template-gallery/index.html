@@ -761,7 +761,7 @@
     <div class="stage-narrow">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
         <div id="vc-selected-badge" style="padding:8px 16px;border-radius:99px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(135deg,#ea580c,#b91c1c);">🏀 NBA Tiers · Classic</div>
-        <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;" onclick="goTo('screen-vc-gallery')">Change template</button>
+        <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;" onclick="goTo('vc-gallery')">Change template</button>
       </div>
       <h1 class="stage-title" style="text-align:left;">One last thing</h1>
       <p class="stage-sub" style="text-align:left;">Pick your slate and entry limit. No money decisions yet.</p>
@@ -787,7 +787,7 @@
     </div>
   </div>
   <div class="create-footer">
-    <div class="left"><button class="btn btn-ghost" onclick="goTo('screen-vc-gallery')">← Change template</button></div>
+    <div class="left"><button class="btn btn-ghost" onclick="goTo('vc-gallery')">← Change template</button></div>
     <div class="center"><span class="text-muted" style="font-size:13px;">Almost done</span></div>
     <div class="right"><button class="btn btn-primary btn-xl" onclick="vcCreateContest()">Create contest →</button></div>
   </div>
@@ -2865,7 +2865,7 @@ const VC_SPORT_LABELS = {nba:'🏀 NBA', pga:'⛳ PGA', mlb:'⚾ MLB'};
 const VC_FORMAT_LABELS = {tiers:'Tiers', pickem:"Pick'em", survivor:'Survivor', bestball:'Best Ball'};
 const VC_TEMPLATE_LABELS = {classic:'Classic 6', star:'Star+Studs', flex:'Flex 4', deep:'Deep Cuts', custom:'Custom'};
 const VC_SPORT_BGS = {nba:'linear-gradient(135deg,#ea580c,#b91c1c)', pga:'linear-gradient(135deg,#15803d,#14532d)', mlb:'linear-gradient(135deg,#1e3a8a,#b91c1c)'};
-function startCreate() { goTo('screen-vc-gallery'); }
+function startCreate() { goTo('vc-gallery'); }
 function vcSelectTemplate(card){
   const sport = card.dataset.sport, fmt = card.dataset.format, tpl = card.dataset.template;
   state.sport = sport; state.format = fmt; state.template = tpl;
@@ -2873,7 +2873,7 @@ function vcSelectTemplate(card){
   // Update badge in settings
   const badge = document.getElementById('vc-selected-badge');
   if(badge){ badge.textContent = (VC_SPORT_LABELS[sport]||sport)+' · '+(VC_FORMAT_LABELS[fmt]||fmt)+' · '+(VC_TEMPLATE_LABELS[tpl]||tpl); badge.style.background = VC_SPORT_BGS[sport]||'var(--ink)'; }
-  goTo('screen-vc-settings');
+  goTo('vc-settings');
 }
 function vcScratch(){
   state.sport='nba'; state.format='tiers'; state.template='custom';
