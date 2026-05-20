@@ -440,16 +440,17 @@
   .live-pulse::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--good); animation: livepulse 1.5s ease-in-out infinite; }
   @keyframes livepulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.8); } }
   .illustrative-tag { background: var(--bg); color: var(--ink-3); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .6px; }
-  .ll-table-head { display: grid; grid-template-columns: 36px 1fr 90px 180px; gap: 14px; padding: 0 4px 10px; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-3); }
-  .ll-table-head .col-pay { text-align: right; display: flex; align-items: flex-end; justify-content: flex-end; }
+  .ll-table-head { display: grid; grid-template-columns: 36px 1fr 110px 220px; gap: 24px; padding: 0 4px 10px; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-3); }
+  .ll-table-head .col-score { text-align: right; }
+  .ll-table-head .col-pay { text-align: right; display: flex; align-items: flex-end; justify-content: flex-end; color: var(--whop); }
   .ll-table-head .col-pay-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-  .ll-table-head .col-pay-top { display: flex; align-items: center; gap: 6px; }
+  .ll-table-head .col-pay-top { display: flex; align-items: center; gap: 6px; color: var(--whop); }
   .ll-table-head .col-pay .whop-mini { background: var(--whop-soft); color: var(--whop); padding: 2px 6px; border-radius: 999px; font-size: 9px; }
   .ll-table-head .col-pay-sub { display: inline-flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--ink-3); }
   .whop-inline-logo { height: 12px; width: auto; vertical-align: middle; color: var(--ink-2); }
   .powered-by { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--ink-3); font-weight: 600; }
   .whop-footer-right { display: flex; align-items: center; gap: 12px; }
-  .ll-row { display: grid; grid-template-columns: 36px 1fr 90px 180px; gap: 14px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); transition: background .25s; }
+  .ll-row { display: grid; grid-template-columns: 36px 1fr 110px 220px; gap: 24px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); transition: background .25s; }
   .ll-row:last-child { border-bottom: 0; }
   .ll-row.flash { background: var(--teal-soft); }
   .ll-rank { font-size: 18px; text-align: center; font-weight: 700; color: var(--ink-2); }
@@ -459,7 +460,7 @@
   .ll-picks { font-size: 11px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ll-score { color: var(--teal-ink); font-weight: 700; font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
   .ll-payout { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
-  .ll-payout .pay-amt { font-weight: 800; color: var(--warn); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .ll-payout .pay-amt { font-weight: 800; color: var(--whop); font-size: 14px; font-variant-numeric: tabular-nums; }
   .ll-payout .pay-amt.muted { color: var(--ink-3); font-weight: 500; font-size: 13px; }
   .ll-payout .whop-tag { display: inline-flex; align-items: center; gap: 4px; background: var(--whop-soft); color: var(--whop); padding: 3px 8px 3px 5px; border-radius: 999px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; flex-shrink: 0; line-height: 1; }
   .ll-payout .whop-tag img { display: block; }
@@ -1371,7 +1372,7 @@
             <div class="ll-table-head">
               <div>#</div>
               <div>Player</div>
-              <div style="text-align:right;">Score</div>
+              <div class="col-score">Score</div>
               <div class="col-pay">
                 <div class="col-pay-stack">
                   <div class="col-pay-top">Projected payout · <span class="whop-mini">via Whale Wallet</span></div>
