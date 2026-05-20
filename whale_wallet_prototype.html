@@ -440,10 +440,16 @@
   .live-pulse::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--good); animation: livepulse 1.5s ease-in-out infinite; }
   @keyframes livepulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.8); } }
   .illustrative-tag { background: var(--bg); color: var(--ink-3); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .6px; }
-  .ll-table-head { display: grid; grid-template-columns: 36px 1fr 90px 150px; gap: 14px; padding: 0 4px 10px; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-3); }
-  .ll-table-head .col-pay { text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+  .ll-table-head { display: grid; grid-template-columns: 36px 1fr 90px 180px; gap: 14px; padding: 0 4px 10px; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-3); }
+  .ll-table-head .col-pay { text-align: right; display: flex; align-items: flex-end; justify-content: flex-end; }
+  .ll-table-head .col-pay-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .ll-table-head .col-pay-top { display: flex; align-items: center; gap: 6px; }
   .ll-table-head .col-pay .whop-mini { background: var(--whop-soft); color: var(--whop); padding: 2px 6px; border-radius: 999px; font-size: 9px; }
-  .ll-row { display: grid; grid-template-columns: 36px 1fr 90px 150px; gap: 14px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); transition: background .25s; }
+  .ll-table-head .col-pay-sub { display: inline-flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--ink-3); }
+  .whop-inline-logo { height: 12px; width: auto; vertical-align: middle; color: var(--ink-2); }
+  .powered-by { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--ink-3); font-weight: 600; }
+  .whop-footer-right { display: flex; align-items: center; gap: 12px; }
+  .ll-row { display: grid; grid-template-columns: 36px 1fr 90px 180px; gap: 14px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); transition: background .25s; }
   .ll-row:last-child { border-bottom: 0; }
   .ll-row.flash { background: var(--teal-soft); }
   .ll-rank { font-size: 18px; text-align: center; font-weight: 700; color: var(--ink-2); }
@@ -1366,15 +1372,23 @@
               <div>#</div>
               <div>Player</div>
               <div style="text-align:right;">Score</div>
-              <div class="col-pay">Projected payout <span class="whop-mini">via Whale Wallet</span></div>
+              <div class="col-pay">
+                <div class="col-pay-stack">
+                  <div class="col-pay-top">Projected payout · <span class="whop-mini">via Whale Wallet</span></div>
+                  <div class="col-pay-sub">Powered by <img src="assets/whop-wordmark.svg" alt="Whop" class="whop-inline-logo"></div>
+                </div>
+              </div>
             </div>
             <div id="liveLeaderboard"></div>
             <div class="whop-footer">
               <div class="ll-left">
-                <img src="assets/whop-icon.png" alt="Whop" class="whop-logo-img-sm" />
-                <span>Payouts auto-distributed by <strong>Whop</strong> when the contest ends. Splash plugs into the leaderboard via API and maps your prize structure on top.</span>
+                <span>🐳</span>
+                <span>Payouts auto-distributed by <strong>Whale Wallet</strong> when the contest ends. Splash plugs into the leaderboard via API and maps your prize structure on top.</span>
               </div>
-              <span class="illustrative-tag">Sample data</span>
+              <div class="whop-footer-right">
+                <span class="illustrative-tag">Sample data</span>
+                <span class="powered-by">Powered by <img src="assets/whop-wordmark.svg" alt="Whop" class="whop-inline-logo"></span>
+              </div>
             </div>
           </div>
           <div class="panel mt-16"><h2>Tier structure</h2><div id="detailTiers2"></div></div>
@@ -2268,7 +2282,7 @@ function renderLiveLeaderboard() {
     if (!state.wallet.enabled) {
       payoutCell = `<div class="ll-payout"><span class="pay-amt muted">Set prizing →</span></div>`;
     } else if (r._payout > 0) {
-      payoutCell = `<div class="ll-payout"><span class="pay-amt">$${r._payout.toLocaleString()}</span><span class="whop-tag"><img src="assets/whop-icon.png" alt="" style="width:11px;height:11px;border-radius:2px;"/>Whale Wallet</span></div>`;
+      payoutCell = `<div class="ll-payout"><span class="pay-amt">$${r._payout.toLocaleString()}</span><span class="whop-tag">via Whale Wallet</span></div>`;
     } else {
       payoutCell = `<div class="ll-payout"><span class="pay-amt muted">—</span></div>`;
     }
