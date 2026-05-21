@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Big Splash $21M NFL Survivor | Splash Sports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f1f3f5;
+    --ink: #101113;
+    --ink-2: #6b6f76;
+    --ink-3: #9aa0a6;
+    --line: #f1f3f5;
+    --card: #ffffff;
+    --teal: #4BEBE2;
+    --teal-2: #03cdc2;
+    --teal-ink: #03867f;
+    --green: #40C057;
+    --dark: #1A1B1E;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; padding: 0; }
+  a { color: inherit; text-decoration: none; }
+  a:hover { text-decoration: none; }
+  h1, h2, h3, h4 { margin: 0; }
+
+  /* ===== TOP NAV ===== */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    height: 64px;
+    background: linear-gradient(180deg, #0d1116 0%, #1A1B1E 100%);
+    color: #fff;
+    display: flex; align-items: center;
+    padding: 0 28px;
+  }
+  .topbar-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex; align-items: center; gap: 24px;
+    position: relative;
+  }
+  .logo { display: flex; align-items: center; color: #fff; text-decoration: none; }
+  .logo:hover { opacity: .9; }
+  .logo-img { height: 24px; display: block; }
+  .topnav {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 36px;
+  }
+  .topnav a {
+    color: #fff; font-size: 16px; font-weight: 600;
+    padding: 8px 0;
+  }
+  .topnav a:hover { opacity: .8; }
+  .topright { margin-left: auto; }
+  .btn-login {
+    background: var(--teal);
+    color: var(--dark);
+    padding: 8px 18px;
+    border-radius: 36px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .btn-login:hover { background: #6cefe7; }
+
+  /* ===== BANNER ===== */
+  .banner {
+    width: 100%;
+    height: 240px;
+    background: linear-gradient(180deg, #0d2b9c 0%, #0a2487 50%, #061e74 100%);
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+  }
+  .banner-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    height: 240px;
+    padding: 18px 28px 72px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    position: relative;
+    z-index: 2;
+  }
+  .banner-splash-logo {
+    display: block;
+    height: 24px;
+    margin-bottom: 10px;
+  }
+  .banner-amt {
+    font-size: 60px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1;
+    color: #DCFF1E;
+    text-align: center;
+    margin: 0;
+    text-shadow: 0 4px 16px rgba(0,0,0,.3);
+  }
+  .banner-ttl {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+    color: #fff;
+    margin: 6px 0 2px;
+    text-align: center;
+  }
+  .banner-tag {
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    font-weight: 800;
+    color: #DCFF1E;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  /* Sponsored by Polymarket lockup */
+  .banner-sponsor {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .banner-sponsor .by {
+    font-size: 14px;
+    letter-spacing: 3px;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    opacity: .9;
+  }
+  .banner-sponsor .poly-logo { display: flex; align-items: center; gap: 12px; color: #fff; }
+  .banner-sponsor .poly-mark-img { height: 32px; width: auto; display: block; filter: brightness(0) invert(1); }
+  .banner-sponsor .poly-word { font-size: 32px; font-weight: 700; color: #fff; letter-spacing: -.5px; }
+  @media (max-width: 600px) {
+    .banner-amt { font-size: 40px; }
+    .banner-ttl { font-size: 16px; }
+  }
+
+  /* ===== LATEST TRADES TICKER ===== */
+  .ticker-bar {
+    width: 100%;
+    background: linear-gradient(180deg, #0a1530 0%, #0d1b3a 100%);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    padding: 12px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticker-bar::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0; width: 90px; z-index: 2;
+    background: linear-gradient(90deg, #0d1b3a 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .ticker-bar::after {
+    content: "";
+    position: absolute; right: 0; top: 0; bottom: 0; width: 90px; z-index: 2;
+    background: linear-gradient(270deg, #0d1b3a 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .ticker-header {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: #DCFF1E;
+    color: #0a1530;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    padding: 0 14px;
+    display: flex; align-items: center; gap: 8px;
+    z-index: 3;
+  }
+  .ticker-header .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #0a1530;
+    animation: tickerPulse 1.4s infinite;
+  }
+  @keyframes tickerPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .4; transform: scale(.7); }
+  }
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    gap: 24px;
+    animation: tickerScroll 60s linear infinite;
+    padding-left: 140px;
+    will-change: transform;
+  }
+  .ticker-bar:hover .ticker-track { animation-play-state: paused; }
+  @keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .trade-pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 999px;
+    padding: 7px 14px 7px 8px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: opacity .3s;
+  }
+  .trade-pill .team-chip {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: -.2px;
+  }
+  .trade-pill .amt {
+    color: #DCFF1E;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .trade-pill .market { color: #fff; }
+  .trade-pill .side-yes { color: #4BEBE2; font-weight: 700; }
+  .trade-pill .side-no { color: #ff8a8a; font-weight: 700; }
+  .trade-pill .price { color: #cbd0d8; }
+  /* polymarket attribution */
+  .ticker-attr {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    z-index: 3;
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(13, 27, 58, .9);
+    backdrop-filter: blur(4px);
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .ticker-attr .lbl { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #9aa0a6; }
+  .ticker-attr .poly { display: flex; align-items: center; gap: 5px; }
+  .ticker-attr .poly img { height: 12px; filter: brightness(0) invert(1); }
+  .ticker-attr .poly span { font-size: 12px; font-weight: 700; color: #fff; letter-spacing: -.2px; }
+
+  /* ===== MAIN CONTENT WRAPPER (with entrants sidebar) ===== */
+  .page-layout {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: 705px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 1080px) {
+    .page-layout { grid-template-columns: 1fr; max-width: 705px; }
+    .entrants-sidebar { display: none; }
+  }
+  .content-wrap {
+    max-width: 705px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  /* Entrants sidebar */
+  .entrants-sidebar {
+    position: sticky;
+    top: 88px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 130px;
+    max-height: calc(100vh - 110px);
+    display: flex; flex-direction: column;
+  }
+  .entrants-sidebar h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 4px;
+  }
+  .entrants-sidebar .ent-count {
+    font-size: 13px;
+    color: var(--ink-3);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .entrants-sidebar .ent-count strong { color: var(--ink); font-weight: 700; }
+  .entrants-sidebar .ent-count .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    animation: tickerPulse 1.6s infinite;
+  }
+  .entrants-sidebar .ent-bar {
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .entrants-sidebar .ent-bar > div {
+    height: 100%;
+    width: 54.97%;
+    background: linear-gradient(90deg, var(--teal) 0%, #03cdc2 100%);
+    border-radius: 2px;
+  }
+  .entrants-list {
+    overflow-y: auto;
+    flex: 1;
+    margin: 0 -8px;
+    padding: 0 8px;
+  }
+  .entrant-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .entrant-row:last-child { border-bottom: 0; }
+  .entrant-row .av {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .entrant-row .name {
+    flex: 1;
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .entrant-row .entries {
+    color: var(--ink-3);
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .entrants-sidebar .view-all {
+    display: block;
+    text-align: center;
+    color: var(--teal-ink);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 0 0;
+    border-top: 1px solid var(--line);
+    margin-top: 6px;
+  }
+
+  /* PFP — teal whale circle (sits at top of content) */
+  .pfp {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: 4px solid var(--bg);
+    margin-top: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    color: var(--dark);
+    overflow: hidden;
+  }
+  .pfp .pfp-whale {
+    width: 50px; height: auto;
+    display: block;
+  }
+  .pfp .pfp-whale path { fill: var(--dark); }
+
+  /* ===== HEADER (contest title + actions + meta) ===== */
+  h1.contest-title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -.2px;
+    color: var(--ink);
+    margin-bottom: 22px;
+  }
+  .actions-row {
+    display: flex; gap: 10px;
+    margin-bottom: 22px;
+  }
+  .btn-primary {
+    background: var(--teal);
+    color: var(--ink);
+    padding: 0 18px;
+    height: 40px;
+    border-radius: 4px;
+    font-weight: 900;
+    font-size: 14px;
+    display: inline-flex; align-items: center;
+  }
+  .btn-primary:hover { background: #6cefe7; }
+  .btn-outline {
+    background: transparent;
+    color: var(--ink);
+    padding: 0 18px;
+    height: 40px;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    font-weight: 900;
+    font-size: 14px;
+    display: inline-flex; align-items: center;
+  }
+  .btn-outline:hover { background: rgba(0,0,0,.04); }
+
+  .meta-row {
+    color: var(--ink);
+    font-size: 16px;
+    margin-bottom: 36px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px;
+  }
+  .meta-row .creator-name { color: var(--teal-ink); font-weight: 600; }
+  .meta-row .lbl { color: var(--ink-3); }
+  .meta-row .v { color: var(--ink); font-weight: 400; }
+  .meta-row .v.prize { color: var(--teal-ink); font-weight: 600; }
+  .meta-row .v.bold { font-weight: 700; }
+  .meta-row .g-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px;
+    border-radius: 32px;
+    background: var(--green);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .g-badge-sm {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px;
+    border-radius: 32px;
+    background: var(--green);
+    color: #fff;
+    font-size: 8.75px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  /* ===== SECTION HEADINGS ===== */
+  h3.section-h {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .info-i {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink-3);
+    color: var(--ink-3);
+    font-size: 11px; font-weight: 600;
+    font-style: italic;
+    font-family: Georgia, serif;
+    cursor: help;
+  }
+  .info-i::before { content: "i"; }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 28px;
+  }
+
+  /* Prize payouts card */
+  .payout-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 0;
+    font-size: 16px;
+  }
+  .payout-row .pos { color: var(--ink); font-weight: 400; }
+  .payout-row .amt { color: var(--ink); font-weight: 400; }
+  .guaranteed-row {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--ink-3);
+    font-size: 14px;
+    margin-top: 4px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .payout-desc {
+    color: var(--ink-2);
+    font-size: 15px;
+    margin: 14px 0 18px;
+    line-height: 1.5;
+  }
+  .view-details {
+    display: block;
+    text-align: center;
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 400;
+    padding: 4px 0 0;
+  }
+  .view-details:hover { color: var(--teal-ink); }
+
+  /* About card */
+  .about-text { color: var(--ink); font-size: 16px; line-height: 1.55; margin: 0 0 16px; }
+  .about-text:last-of-type { margin-bottom: 24px; }
+
+  /* Detail rows (League, Contest Type, etc.) */
+  .detail-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .detail-row:last-child { border-bottom: 0; }
+  .detail-row .ico {
+    width: 20px; height: 20px;
+    flex-shrink: 0;
+    color: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .detail-row .ico svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+  .detail-row .lbl {
+    flex: 1;
+    color: var(--ink);
+    font-size: 16px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .detail-row .v { color: var(--ink); font-size: 16px; font-weight: 700; }
+  .detail-row .v.teal { color: var(--teal-ink); font-weight: 600; }
+  .detail-row .v.plain { font-weight: 400; }
+
+  /* Contest settings rows (label with info icon, value right) */
+  .setting-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .setting-row:last-child { border-bottom: 0; }
+  .setting-row .lbl {
+    flex: 1;
+    color: var(--ink);
+    font-size: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .setting-row .v {
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 700;
+    text-align: right;
+    max-width: 60%;
+  }
+
+  /* Rules list */
+  .rules-card { padding: 0; }
+  .rule-row {
+    color: var(--ink);
+    font-size: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+    line-height: 1.5;
+  }
+  .rule-row:last-child { border-bottom: 0; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--dark);
+    color: #fff;
+    padding: 56px 28px 32px;
+    margin-top: 56px;
+  }
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .footer-logo { margin-bottom: 24px; }
+  .footer-logo img { height: 28px; display: block; }
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 32px;
+    padding-bottom: 32px;
+  }
+  @media (max-width: 920px) { .footer-cols { grid-template-columns: repeat(2, 1fr); } }
+  .footer-col h4 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+    margin-bottom: 18px;
+  }
+  .footer-col a {
+    display: block;
+    color: #c5c8cd;
+    font-size: 14px;
+    padding: 6px 0;
+    font-weight: 400;
+  }
+  .footer-col a:hover { color: #fff; }
+  .footer-gambler {
+    color: #9aa0a6;
+    font-size: 14px;
+    max-width: 360px;
+    margin-top: 0;
+    line-height: 1.5;
+  }
+  .footer-bottom {
+    padding-top: 28px;
+    border-top: 1px solid #2a2c30;
+    color: #9aa0a6;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="logo" href="nfl_survivor_landing.html" aria-label="Splash Sports home">
+      <img src="assets/splash-logo-white.svg" alt="splash sports" class="logo-img" />
+    </a>
+    <nav class="topnav">
+      <a>Home</a>
+      <a>Lobby</a>
+      <a>QuickPicks</a>
+    </nav>
+    <div class="topright">
+      <a class="btn-login">Log in or Sign up</a>
+    </div>
+  </div>
+</header>
+
+<!-- ===== BANNER ===== -->
+<section class="banner" aria-label="$21 Million NFL Survivor Contest — The Biggest Contest in the World, Sponsored by Polymarket">
+  <div class="banner-inner">
+    <h2 class="banner-amt">The Big Splash</h2>
+    <div class="banner-ttl">$21 Million Dollar NFL Survivor Contest</div>
+    <div class="banner-tag">The Biggest Contest in the World</div>
+  </div>
+
+  <!-- Sponsored by Polymarket strap pinned to bottom -->
+  <div class="banner-sponsor">
+    <span class="by">Sponsored by</span>
+    <span class="poly-logo">
+      <img class="poly-mark-img" src="assets/polymarket-mark.svg" alt="" aria-hidden="true" />
+      <span class="poly-word">Polymarket</span>
+    </span>
+  </div>
+</section>
+
+<!-- ===== LATEST TRADES TICKER ===== -->
+<section class="ticker-bar" aria-label="Latest NFL prediction market trades on Polymarket">
+  <div class="ticker-header">
+    <span class="pulse"></span>
+    Latest Trades
+  </div>
+  <div class="ticker-attr">
+    <span class="lbl">via</span>
+    <span class="poly">
+      <img src="assets/polymarket-mark.svg" alt="" aria-hidden="true" />
+      <span>Polymarket</span>
+    </span>
+  </div>
+  <div class="ticker-track" id="tickerTrack"></div>
+</section>
+
+<div class="page-layout">
+<div class="content-wrap">
+  <div class="pfp">
+    <svg class="pfp-whale" viewBox="0 0 45.195 22.727" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M 14.167 3.747 C 14.259 3.268 14.316 2.778 14.316 2.276 L 11.107 2.276 C 10.064 2.276 9.078 2.755 8.425 3.595 L 7.164 5.194 L 5.903 3.595 C 5.33 2.872 4.505 2.405 3.611 2.3 C 3.542 2.288 3.485 2.288 3.416 2.288 L 0 2.288 C 0 2.918 0.08 3.525 0.229 4.109 C 0.287 4.342 0.355 4.576 0.436 4.798 C 0.481 4.914 0.516 5.019 0.562 5.124 C 1.651 7.728 4.195 9.572 7.164 9.572 C 10.614 9.572 13.502 7.074 14.167 3.747 Z M 44.737 8.089 C 44.588 7.576 44.393 7.085 44.164 6.607 C 44.129 6.525 44.084 6.455 44.049 6.373 C 43.969 6.222 43.889 6.058 43.808 5.907 C 43.682 5.673 43.545 5.463 43.396 5.241 C 41.482 2.346 38.238 0.455 34.547 0.455 C 31.303 0.455 28.61 1.377 26.535 4.004 C 26.157 4.494 25.79 5.031 25.446 5.638 C 25.389 5.731 25.343 5.825 25.297 5.918 C 25.205 6.105 25.114 6.303 25.022 6.502 C 24.976 6.607 24.93 6.7 24.896 6.805 C 23.75 9.689 23.383 13.436 20.529 15.222 C 19.417 15.98 17.996 16.494 16.414 16.599 C 16.299 16.611 16.185 16.611 16.07 16.622 L 15.726 16.622 C 13.766 16.622 11.989 16.027 10.706 15.058 C 10.305 14.755 9.949 14.416 9.651 14.054 C 9.41 13.762 9.216 13.447 9.055 13.12 C 9.009 13.039 8.975 12.957 8.941 12.875 C 8.734 12.373 8.62 11.848 8.62 11.288 L 5.685 11.288 C 5.685 12.222 5.8 13.132 6.018 14.008 C 6.063 14.183 6.109 14.358 6.155 14.521 C 6.316 15.035 6.499 15.525 6.728 16.004 C 6.763 16.085 6.809 16.167 6.843 16.237 C 6.923 16.389 7.003 16.552 7.084 16.704 C 7.129 16.774 7.175 16.856 7.21 16.926 C 7.301 17.078 7.393 17.218 7.485 17.369 C 7.771 17.801 8.092 18.21 8.436 18.595 C 8.551 18.723 8.665 18.852 8.792 18.969 C 9.032 19.214 9.284 19.447 9.548 19.669 C 10.465 20.439 11.52 21.058 12.666 21.49 C 12.826 21.548 12.998 21.607 13.159 21.665 C 13.915 21.898 14.695 22.062 15.508 22.12 C 15.783 22.144 16.059 22.155 16.334 22.155 L 34.524 22.155 C 38.203 22.155 41.459 20.253 43.373 17.369 L 43.786 16.704 C 43.877 16.552 43.958 16.401 44.038 16.237 C 44.072 16.155 44.118 16.085 44.152 16.004 C 44.382 15.525 44.565 15.035 44.725 14.521 C 44.783 14.346 44.829 14.183 44.863 14.008 C 45.081 13.144 45.195 12.233 45.195 11.288 C 45.195 10.354 45.081 9.443 44.863 8.568 C 44.84 8.428 44.783 8.253 44.737 8.089 Z M 40.45 6.642 L 40.416 6.852 C 40.37 7.031 40.274 7.193 40.141 7.319 C 40.095 7.366 40.049 7.401 40.003 7.436 C 39.98 7.447 39.957 7.471 39.934 7.482 C 39.9 7.506 39.866 7.517 39.831 7.541 C 39.797 7.564 39.751 7.576 39.716 7.587 L 39.579 7.622 C 39.51 7.634 39.441 7.646 39.373 7.646 C 39.315 7.646 39.247 7.634 39.189 7.634 C 39.12 7.622 39.063 7.611 39.006 7.576 C 38.994 7.576 38.983 7.564 38.971 7.564 C 38.845 7.506 38.719 7.424 38.616 7.319 C 38.192 6.887 38.192 6.175 38.616 5.743 C 38.719 5.638 38.845 5.556 38.971 5.498 C 38.983 5.498 38.994 5.486 39.006 5.486 C 39.063 5.463 39.132 5.451 39.189 5.44 C 39.247 5.428 39.315 5.416 39.373 5.416 C 39.441 5.416 39.51 5.428 39.579 5.44 L 39.716 5.475 C 39.762 5.486 39.797 5.498 39.831 5.521 C 39.866 5.533 39.9 5.556 39.934 5.58 C 39.957 5.591 39.98 5.615 40.003 5.626 C 40.049 5.661 40.095 5.696 40.141 5.743 C 40.278 5.883 40.37 6.047 40.416 6.21 C 40.439 6.28 40.45 6.35 40.45 6.42 Z" fill="#0a0a0c"></path>
+    </svg>
+  </div>
+
+  <h1 class="contest-title">The Big Splash $21M NFL Survivor</h1>
+
+  <div class="actions-row">
+    <a class="btn-primary">View contest</a>
+    <button class="btn-outline">Share contest</button>
+  </div>
+
+  <div class="meta-row">
+    <span class="creator-name">Splash</span><span class="lbl">Creator</span>
+    <span class="v prize">$21,000,000</span><span class="lbl">Prizes</span>
+    <span class="g-badge">G</span>
+    <span class="v bold">$1,000</span><span class="lbl">Entry</span>
+    <span class="v bold">11,543 / 21,000</span><span class="lbl">Entries</span>
+  </div>
+
+  <!-- ===== PRIZE PAYOUTS ===== -->
+  <h3 class="section-h">Prize payouts <span class="info-i" title="Winner-take-all payout"></span></h3>
+  <div class="card">
+    <div class="payout-row">
+      <span class="pos">1st</span>
+      <span class="amt">$21,000,000.00</span>
+    </div>
+    <div class="guaranteed-row">
+      <span>Guaranteed</span>
+      <span class="g-badge-sm">G</span>
+    </div>
+    <div class="payout-desc">This is a guaranteed contest. The payout amounts will not change if the contest does not fill.</div>
+    <a class="view-details" href="#">View payout details</a>
+  </div>
+
+  <!-- ===== ABOUT THIS CONTEST ===== -->
+  <h3 class="section-h">About this contest</h3>
+  <div class="card">
+    <p class="about-text">Entrants that select only winners will advance to the next slate. The entrant that makes it the furthest takes home the whole prize. If all remaining entrants are eliminated in the same slate, they will all be considered winners and will all split the prize. For Week 11, Week 12, Week 13, Week 14, Week 15, Week 16, Week 17 and Week 18 you will be required to select 2 teams. This contest was created by a Splash Employee. Check the individual week tabs in your picksheet to view the pick deadline for each week. The deadline appears at the top as "Picks lock" with the date and time.</p>
+    <p class="about-text">Entrants will be prevented from selecting a team more than one time throughout the duration of the contest. If an entrant runs out of teams to pick, they will be unable to advance to the next slate.</p>
+
+    <div class="detail-row">
+      <span class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="6" transform="rotate(-30 12 12)"/><path d="M7.5 14.5 L16.5 9.5 M9 17 L11 15 M13 11 L15 9 M10 11 L14 15"/></svg></span>
+      <span class="lbl">League</span>
+      <span class="v">NFL</span>
+    </div>
+    <div class="detail-row">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3 L19 6 V12 C19 16 16 19 12 21 C8 19 5 16 5 12 V6 L12 3 Z"/></svg></span>
+      <span class="lbl">Contest Type</span>
+      <span class="v">Survivor</span>
+    </div>
+    <div class="detail-row">
+      <span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 12 l2 2 l4 -4"/></svg></span>
+      <span class="lbl">Multi-Entry</span>
+      <span class="v">Yes (150)</span>
+    </div>
+    <div class="detail-row">
+      <span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20 C4 16 8 14 12 14 C16 14 20 16 20 20"/></svg></span>
+      <span class="lbl">Creator</span>
+      <a href="#" class="v teal" style="text-decoration:none;">Splash</a>
+    </div>
+    <div class="detail-row">
+      <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9 H21 M8 3 V7 M16 3 V7"/></svg></span>
+      <span class="lbl">Slate</span>
+      <a href="#" class="v teal" style="text-decoration:none;">View all weeks</a>
+    </div>
+    <div class="detail-row">
+      <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9 H21 M8 3 V7 M16 3 V7"/></svg></span>
+      <span class="lbl">Entry Deadline <span class="info-i" title="The contest entry deadline"></span></span>
+      <span class="v">9/13 @ 1:00 PM</span>
+    </div>
+  </div>
+
+  <!-- ===== CONTEST SETTINGS ===== -->
+  <h3 class="section-h">Contest settings</h3>
+  <div class="card">
+    <div class="setting-row">
+      <span class="lbl">Pick objective <span class="info-i" title="What you're picking"></span></span>
+      <span class="v">Pick Winners</span>
+    </div>
+    <div class="setting-row">
+      <span class="lbl">Team use limit <span class="info-i" title="How often each team can be used"></span></span>
+      <span class="v">Once</span>
+    </div>
+    <div class="setting-row">
+      <span class="lbl">Double pick weeks <span class="info-i" title="Weeks where you pick two teams"></span></span>
+      <span class="v">Week 11, Week 12, Week 13, Week 14, Week 15, Week 16, Week 17, Week 18</span>
+    </div>
+    <div class="setting-row">
+      <span class="lbl">Pick Scoring <span class="info-i" title="How picks are scored"></span></span>
+      <span class="v">Straight up</span>
+    </div>
+  </div>
+
+  <!-- ===== RULES ===== -->
+  <h3 class="section-h">Rules</h3>
+  <div class="card rules-card">
+    <div class="rule-row">Select only winners to advance to the next week</div>
+    <div class="rule-row">Losses, Ties, and Missed Picks result in elimination from the contest</div>
+    <div class="rule-row">If all remaining entrants are eliminated in the same slate, the contest will conclude and the remaining entrants will split the prize</div>
+    <div class="rule-row">There are no tiebreakers</div>
+    <div class="rule-row">If you run out of teams, you will be unable to make a pick for the current slate, and will be unable to advance</div>
+    <div class="rule-row">If one or more remaining entries is able to make a correct selection for that slate, you will be eliminated</div>
+    <div class="rule-row">If all other remaining entries are unable to make a correct selection for that slate, the contest will conclude and the remaining entrants will split the prize</div>
+    <div class="rule-row">If all remaining entries run out of teams, the contest will conclude at the end of the slate and the remaining entrants will split the prize</div>
+  </div>
+</div>
+
+<!-- ===== ENTRANTS SIDEBAR ===== -->
+<aside class="entrants-sidebar" aria-label="Contest entrants">
+  <h3>Entrants</h3>
+  <div class="ent-count"><span class="live-dot"></span><strong>11,543</strong> / 21,000 entries</div>
+  <div class="ent-bar"><div></div></div>
+  <div class="entrants-list" id="entrantsList"></div>
+  <a class="view-all" href="#">View all 11,543 entrants →</a>
+</aside>
+
+</div><!-- /.page-layout -->
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="assets/splash-logo-white.svg" alt="splash sports" />
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Responsible Gaming</h4>
+        <a>Responsible Gaming Commitment</a>
+        <a>Responsible Gaming Limits</a>
+        <a>Responsible Gaming Policy</a>
+        <a>Self-Exclusion</a>
+        <a>Average Results</a>
+        <p class="footer-gambler" style="margin-top:18px;">If you or someone you know has a gambling problem, help is available. Call 1-800-GAMBLER</p>
+      </div>
+      <div class="footer-col">
+        <h4>Splash Apps</h4>
+        <a>iOS</a>
+        <a>Android</a>
+        <a>Android Canada</a>
+      </div>
+      <div class="footer-col">
+        <h4>What's New?</h4>
+        <a>Brand Guidelines</a>
+        <a>Commissioner Rewards</a>
+        <a>Where Can I Play?</a>
+        <a>Game Rules</a>
+      </div>
+      <div class="footer-col">
+        <h4>My Account</h4>
+        <a>Deposit</a>
+        <a>Withdrawal</a>
+        <a>Transaction History</a>
+        <a>Account Settings</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a>Terms of Use</a>
+        <a>Privacy Policy</a>
+        <a>Cookie Policy</a>
+        <a>FAQs</a>
+        <a>Contact Us</a>
+      </div>
+    </div>
+    <div class="footer-bottom">2026 Splash All Rights Reserved</div>
+  </div>
+</footer>
+<script>
+  // ===== LATEST TRADES TICKER =====
+  const TRADES = [
+    { team: "CHI", color: "#0B162A", amt: "$250",   market: "Bears OVER 10.5 wins", side: "YES", price: "$0.42" },
+    { team: "DAL", color: "#003594", amt: "$1,000", market: "Cowboys ML Week 1",     side: "YES", price: "$0.58" },
+    { team: "KC",  color: "#E31837", amt: "$540",   market: "Mahomes MVP",           side: "YES", price: "$0.18" },
+    { team: "PHI", color: "#004C54", amt: "$320",   market: "Eagles win NFC East",   side: "YES", price: "$0.49" },
+    { team: "BUF", color: "#00338D", amt: "$2,500", market: "Bills OVER 11.5 wins",  side: "YES", price: "$0.61" },
+    { team: "SF",  color: "#AA0000", amt: "$1,800", market: "49ers win Super Bowl",  side: "YES", price: "$0.13" },
+    { team: "KC",  color: "#E31837", amt: "$420",   market: "Kelce OVER 850.5 rec yds", side: "YES", price: "$0.55" },
+    { team: "HOU", color: "#03202F", amt: "$180",   market: "Stroud Comeback POY",   side: "YES", price: "$0.22" },
+    { team: "DET", color: "#0076B6", amt: "$760",   market: "Lions OVER 11.5 wins",  side: "YES", price: "$0.54" },
+    { team: "BAL", color: "#241773", amt: "$3,200", market: "Lamar MVP",             side: "YES", price: "$0.15" },
+    { team: "MIA", color: "#008E97", amt: "$220",   market: "Tua OVER 4,000 pass yds", side: "NO", price: "$0.47" },
+    { team: "CIN", color: "#FB4F14", amt: "$640",   market: "Bengals make playoffs", side: "YES", price: "$0.63" },
+    { team: "ATL", color: "#A71930", amt: "$95",    market: "Falcons UNDER 7.5 wins", side: "YES", price: "$0.39" },
+    { team: "HOU", color: "#03202F", amt: "$1,100", market: "Texans win AFC South",  side: "YES", price: "$0.41" },
+    { team: "PHI", color: "#004C54", amt: "$2,000", market: "Saquon OVER 1,200 rush yds", side: "YES", price: "$0.52" },
+    { team: "PIT", color: "#FFB612", amt: "$310",   market: "Steelers OVER 8.5 wins", side: "YES", price: "$0.46" },
+    { team: "GB",  color: "#203731", amt: "$880",   market: "Packers win NFC North", side: "YES", price: "$0.28" },
+    { team: "NYJ", color: "#125740", amt: "$140",   market: "Jets UNDER 8.5 wins",   side: "YES", price: "$0.55" },
+    { team: "LAR", color: "#003594", amt: "$520",   market: "Stafford OVER 25.5 TDs", side: "YES", price: "$0.38" },
+    { team: "JAX", color: "#101820", amt: "$210",   market: "Jaguars win AFC South", side: "NO", price: "$0.71" },
+    { team: "CLE", color: "#311D00", amt: "$430",   market: "Browns make playoffs",  side: "YES", price: "$0.34" },
+    { team: "MIN", color: "#4F2683", amt: "$1,400", market: "Jefferson OVER 1,400 rec yds", side: "YES", price: "$0.48" },
+    { team: "TB",  color: "#D50A0A", amt: "$165",   market: "Bucs UNDER 8.5 wins",   side: "YES", price: "$0.42" },
+    { team: "DEN", color: "#FB4F14", amt: "$95",    market: "Broncos make playoffs", side: "NO", price: "$0.64" },
+    { team: "SEA", color: "#002244", amt: "$370",   market: "Seahawks OVER 9.5 wins", side: "YES", price: "$0.44" },
+    { team: "NE",  color: "#002244", amt: "$120",   market: "Patriots UNDER 6.5 wins", side: "YES", price: "$0.51" },
+  ];
+  function renderTicker() {
+    const track = document.getElementById('tickerTrack');
+    if (!track) return;
+    const html = TRADES.map(t => `
+      <span class="trade-pill">
+        <span class="team-chip" style="background:${t.color};">${t.team}</span>
+        <span class="amt">${t.amt}</span>
+        <span class="market">${t.market}</span>
+        <span class="side-${t.side.toLowerCase()}">${t.side}</span>
+        <span class="price">@ ${t.price}</span>
+      </span>
+    `).join('');
+    // Duplicate the content so the loop is seamless
+    track.innerHTML = html + html;
+  }
+  renderTicker();
+
+  // ===== ENTRANTS SIDEBAR =====
+  const FIRST_NAMES = ["Mike","Alex","Sarah","Chris","Jordan","Taylor","Pat","Sam","Jamie","Casey","Riley","Morgan","Quinn","Avery","Jesse","Rowan","Drew","Reese","Skyler","Tom","Brian","Kevin","Emma","Olivia","Liam","Noah","Sophia","Aiden","Lucas","Mason","Ethan","Logan","Hailey","Cameron","Hunter","Cooper","Parker","Hayden","Jackson","Carter","Wyatt","Bennett","Wes","Trey","Brooks","Brock","Tate","Knox","Marcus","Owen","Felix"];
+  const LAST_NAMES = ["Smith","Johnson","Williams","Brown","Jones","Garcia","Miller","Davis","Rodriguez","Martinez","Hernandez","Lopez","Wilson","Anderson","Thomas","Taylor","Moore","Jackson","Martin","Lee","Perez","Thompson","White","Harris","Sanchez","Clark","Ramirez","Lewis","Robinson","Walker","Young","Allen","King","Wright","Scott","Torres","Nguyen","Hill","Flores","Green","Adams","Nelson","Baker","Hall","Rivera","Campbell","Mitchell","Carter","Roberts"];
+  const AV_COLORS = ["#FF6B6B","#4ECDC4","#FFD23F","#1652F0","#A78BFA","#FB923C","#10B981","#F472B6","#0EA5E9","#F59E0B","#8B5CF6","#EC4899","#14B8A6","#EF4444","#6366F1","#84CC16"];
+
+  function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function makeEntrant(i) {
+    const f = rand(FIRST_NAMES);
+    const l = rand(LAST_NAMES);
+    const handle = (f + l).toLowerCase() + (Math.random() > .55 ? Math.floor(Math.random()*999) : "");
+    const initials = (f[0] + l[0]).toUpperCase();
+    const av = AV_COLORS[(f.charCodeAt(0) + l.charCodeAt(0) + i) % AV_COLORS.length];
+    const entries = i < 3 ? 150 : (i < 12 ? Math.floor(50 + Math.random() * 100) : Math.floor(1 + Math.random() * 30));
+    return { handle: "@" + handle, initials, av, entries };
+  }
+  function renderEntrants() {
+    const list = document.getElementById('entrantsList');
+    if (!list) return;
+    const items = [];
+    for (let i = 0; i < 80; i++) items.push(makeEntrant(i));
+    list.innerHTML = items.map(e => `
+      <div class="entrant-row">
+        <div class="av" style="background:${e.av};">${e.initials}</div>
+        <div class="name">${e.handle}</div>
+        <div class="entries">${e.entries} ${e.entries === 1 ? 'entry' : 'entries'}</div>
+      </div>
+    `).join('');
+  }
+  renderEntrants();
+</script>
+</body>
+</html>
