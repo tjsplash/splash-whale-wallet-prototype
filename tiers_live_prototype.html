@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Splash · NBA Tiers Live (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --teal:#14E0C8; --teal-2:#10c9b3; --teal-soft:#d6fbf4; --teal-ink:#064f47;
+    --black:#0a0a0c; --bg:#f3f4f6; --card:#fff; --ink:#0a0a0c; --ink-2:#4a4d56; --ink-3:#8a8f99;
+    --line:#e5e7eb; --warn:#f59e0b; --up:#059669; --down:#dc2626; --live:#ef4444;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:Inter,system-ui,sans-serif; background:var(--bg); color:var(--ink); font-size:14px; -webkit-font-smoothing:antialiased; }
+  button { font-family:inherit; cursor:pointer; color:inherit; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* NAV */
+  .nav { position:fixed; top:0; left:0; right:0; height:64px; background:var(--black); display:flex; align-items:center; padding:0 24px; gap:24px; z-index:50; }
+  .logo { display:flex; align-items:center; }
+  .logo-img { height:22px; display:block; }
+  .steps { display:flex; gap:4px; flex:1; justify-content:center; }
+  .steps button { background:none; border:0; color:#9aa0ab; padding:9px 14px; border-radius:8px; font-weight:600; font-size:13px; display:flex; align-items:center; gap:8px; }
+  .steps button i { font-style:normal; width:20px; height:20px; border-radius:50%; background:#2a2c33; color:#cbd0d8; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .steps button.on { color:#fff; background:#1b1c21; } .steps button.on i { background:var(--teal); color:var(--black); }
+  .wallet-pill { display:flex; align-items:center; gap:8px; background:#2a2c33; padding:4px 14px 4px 4px; border-radius:999px; color:#fff; font-weight:600; font-size:13px; }
+  .wallet-pill .av { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#a78bfa,#7dd3fc); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+
+  /* HERO */
+  .hero { background:var(--black); color:#fff; padding:84px 24px 18px; }
+  .hero-in { max-width:1240px; margin:0 auto; }
+  .hero-top { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .hero h1 { margin:0; font-size:24px; font-weight:800; letter-spacing:-.5px; }
+  .hero .meta { color:#9aa0ab; font-size:13px; margin-top:4px; }
+  .live-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(239,68,68,.16); color:#ff8585; font-size:11px; font-weight:800; letter-spacing:1px; padding:4px 10px; border-radius:999px; vertical-align:middle; margin-left:8px; }
+  .live-badge.quiet { background:#2a2c33; color:#cbd0d8; }
+  .dot { width:7px; height:7px; border-radius:50%; background:var(--live); animation:pulse 1.4s infinite; flex:none; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(239,68,68,.7)} 70%{box-shadow:0 0 0 7px rgba(239,68,68,0)} 100%{box-shadow:0 0 0 0 rgba(239,68,68,0)} }
+  .boxes { margin-left:auto; display:flex; gap:8px; }
+  .box { background:#17181c; border:1px solid #2a2c33; border-radius:10px; padding:7px 16px; text-align:center; }
+  .box b { display:block; font-size:15px; } .box span { font-size:11px; color:#9aa0ab; }
+  .controls { display:flex; align-items:center; gap:6px; background:#17181c; border:1px solid #2a2c33; border-radius:12px; padding:5px; }
+  .controls .lbl { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8a8f99; padding:0 8px; }
+  .controls button { background:transparent; border:0; color:#cbd0d8; font-weight:600; font-size:13px; padding:6px 10px; border-radius:8px; }
+  .controls button:hover { background:#2a2c33; color:#fff; }
+  .controls button.on { background:var(--teal); color:var(--black); }
+  body:not(.st-live) .controls { display:none; }
+  .games { display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; }
+  .game { background:#17181c; border:1px solid #2a2c33; border-radius:12px; padding:9px 12px; min-width:118px; flex:1; }
+  .game .st { font-size:11px; font-weight:700; letter-spacing:.5px; color:#ff8585; display:flex; align-items:center; gap:6px; margin-bottom:5px; }
+  .game .st.pre, .game .st.fin { color:#8a8f99; }
+  .game .tm { display:flex; justify-content:space-between; font-weight:700; font-size:14px; padding:1px 0; }
+  .game .tm span:first-child { display:flex; align-items:center; gap:8px; }
+  .sw { width:10px; height:10px; border-radius:3px; display:inline-block; }
+
+  /* LAYOUT */
+  .wrap { max-width:1240px; margin:0 auto; padding:20px 24px 60px; display:grid; grid-template-columns:minmax(0,1fr) 400px; gap:20px; align-items:start; }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:16px; }
+  .sec-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--ink-3); }
+  .st-picks #secStand, .st-picks #huddle, body:not(.st-picks) #secPicks, body:not(.st-picks) #tray, .st-pre #youCard, .st-live #preCard { display:none; }
+  .btn { border:0; border-radius:10px; font-weight:700; padding:11px 16px; font-size:14px; }
+  .btn.pri { background:var(--teal); color:var(--black); } .btn.pri:hover { background:var(--teal-2); }
+  .btn.pri:disabled { background:#e5e7eb; color:#9ca3af; cursor:not-allowed; }
+  .btn.sec { background:var(--bg); } .btn.sec:hover { background:#e5e7eb; }
+
+  /* PICKS */
+  .pk-bar { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .pk-bar h2 { margin:0; font-size:20px; font-weight:800; letter-spacing:-.5px; flex:1; min-width:200px; }
+  .seg { display:flex; background:#e5e7eb; border-radius:10px; padding:3px; }
+  .seg button { border:0; background:none; padding:6px 12px; border-radius:8px; font-weight:600; font-size:12px; color:var(--ink-2); }
+  .seg button.on { background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .tier { padding:16px 18px 18px; margin-bottom:14px; scroll-margin-top:84px; transition:border-color .3s, box-shadow .3s; }
+  .tier.next { border-color:var(--teal-2); box-shadow:0 0 0 3px var(--teal-soft); }
+  .tier-h { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .tier-n { width:30px; height:30px; border-radius:9px; background:var(--black); color:#fff; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; transition:background .3s; }
+  .tier.done .tier-n { background:var(--teal); color:var(--black); }
+  .tier-h .tt { font-weight:800; font-size:15px; } .tier-h .ts { color:var(--ink-3); font-size:12px; margin-left:auto; font-weight:600; }
+  .tier.done .tier-h .ts { color:var(--teal-ink); }
+  .pk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:10px; }
+  .pk { text-align:left; background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:11px; position:relative; transition:transform .15s, border-color .15s, box-shadow .15s, opacity .2s; }
+  .pk:hover { transform:translateY(-2px); border-color:#c7cad1; box-shadow:0 6px 16px rgba(0,0,0,.07); }
+  .pk.sel { border-color:var(--teal-2); background:#f0fdfa; box-shadow:0 0 0 3px var(--teal-soft); }
+  .tier.done .pk:not(.sel) { opacity:.55; } .tier.done .pk:not(.sel):hover { opacity:1; }
+  .pk-top { display:flex; gap:9px; align-items:center; }
+  .pav { width:44px; height:44px; border-radius:50%; color:#fff; font-weight:800; font-size:10px; display:flex; align-items:center; justify-content:center; flex:none; position:relative; overflow:hidden; }
+  .pav img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 0; background:inherit; }
+  .pcard .pr { display:flex; gap:8px; align-items:center; margin-top:6px; } .pcard .pr .pi { min-width:0; } .pcard .pr .n { margin-top:0; }
+  .chip .cav { width:18px; height:18px; border-radius:50%; object-fit:cover; object-position:50% 0; vertical-align:-4px; margin:0 4px 0 -3px; }
+  .pk .n { font-weight:700; font-size:13px; line-height:1.2; } .pk .s { font-size:11px; color:var(--ink-3); margin-top:2px; }
+  .pk .ck { position:absolute; top:-7px; right:-7px; width:22px; height:22px; border-radius:50%; background:var(--teal); color:var(--black); font-weight:900; font-size:12px; display:none; align-items:center; justify-content:center; animation:pop .3s; }
+  .pk.sel .ck { display:flex; }
+  .pk-proj { display:flex; align-items:baseline; gap:6px; margin-top:10px; }
+  .pk-proj b { font-size:19px; font-weight:800; } .pk-proj span { font-size:10px; font-weight:700; letter-spacing:.8px; color:var(--ink-3); }
+  .bar { height:5px; border-radius:99px; background:var(--bg); margin-top:6px; overflow:hidden; } .bar i { display:block; height:100%; border-radius:99px; background:var(--teal-2); }
+  .out-b { background:var(--live); color:#fff; font-size:9px; font-weight:800; letter-spacing:.5px; padding:2px 6px; border-radius:4px; margin-left:6px; vertical-align:middle; }
+  .pk.out .bar i { background:#fca5a5; }
+  @keyframes pop { 30%{transform:scale(1.18)} }
+
+  /* TRAY */
+  .tray { position:sticky; top:84px; padding:18px; }
+  .tray h3 { margin:0 0 12px; font-size:16px; font-weight:800; }
+  .slot { display:flex; align-items:center; gap:10px; padding:9px; border:1.5px dashed var(--line); border-radius:12px; margin-bottom:8px; cursor:pointer; min-height:58px; }
+  .slot.full { border-style:solid; border-color:var(--line); animation:slotin .35s; }
+  @keyframes slotin { from{transform:scale(.96); background:var(--teal-soft)} }
+  .slot .tl { font-size:10px; font-weight:800; color:var(--ink-3); width:20px; }
+  .slot .nm { font-weight:700; } .slot .sb { font-size:11px; color:var(--ink-3); }
+  .slot .pj { margin-left:auto; font-weight:800; } .slot .x { border:0; background:var(--bg); border-radius:50%; width:22px; height:22px; font-size:12px; color:var(--ink-2); }
+  .slot.empty { color:var(--ink-3); font-weight:600; }
+  .tot { display:flex; align-items:flex-end; justify-content:space-between; margin:14px 0 6px; }
+  .tot b { font-size:30px; font-weight:900; letter-spacing:-1px; line-height:1; display:inline-block; } .tot b.pop { animation:pop .4s; }
+  .checks { margin:12px 0; display:grid; gap:6px; font-size:13px; font-weight:600; }
+  .checks div { display:flex; gap:8px; align-items:center; color:var(--ink-3); } .checks .ok { color:var(--teal-ink); } .checks .bad { color:var(--down); }
+  .checks a { color:var(--down); text-decoration:underline; cursor:pointer; margin-left:auto; }
+  .night { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:6px 0 14px; }
+  .night div { background:var(--bg); border-radius:10px; padding:8px; font-size:11px; color:var(--ink-3); font-weight:700; min-height:54px; }
+  .night b { display:block; color:var(--ink); font-size:12px; margin-top:3px; font-weight:700; }
+  .tray .row2 { display:flex; gap:8px; margin-top:8px; } .tray .row2 .btn { flex:1; padding:9px 4px; font-size:13px; }
+  .tray .btn.pri { width:100%; }
+  .hint { font-size:12px; color:var(--ink-3); margin-top:10px; line-height:1.4; }
+
+  /* PRE CARD (standings empty state) */
+  .precard { padding:26px 24px; text-align:center; margin-bottom:20px; background:linear-gradient(180deg,#f0fdfa,#fff 70%); }
+  .precard .big { font-size:46px; font-weight:900; letter-spacing:-2px; line-height:1; margin:10px 0 4px; }
+  .precard h2 { margin:6px 0 6px; font-size:20px; font-weight:800; letter-spacing:-.5px; }
+  .precard p { margin:0 auto 16px; color:var(--ink-2); max-width:460px; line-height:1.5; }
+  .precard .acts { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .precard .facts { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+  .fact { background:#fff; border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:12px; font-weight:600; color:var(--ink-2); }
+
+  /* YOU CARD */
+  .you { padding:18px 20px; display:grid; grid-template-columns:auto 1fr auto; gap:24px; align-items:center; }
+  .you .rank { font-size:42px; font-weight:900; letter-spacing:-2px; line-height:1; }
+  .you .rank small { font-size:14px; font-weight:600; color:var(--ink-3); letter-spacing:0; margin-left:6px; }
+  .you .rank.pop { animation:pop .5s; }
+  .you .stats { display:flex; gap:28px; flex-wrap:wrap; }
+  .you .stat .v { font-size:20px; font-weight:800; margin-top:2px; } .you .stat .v.gold { color:var(--warn); }
+  .delta { display:inline-block; font-size:12px; font-weight:800; padding:2px 8px; border-radius:999px; margin-top:6px; }
+  .delta.up { background:#d1fae5; color:var(--up); } .delta.down { background:#fee2e2; color:var(--down); } .delta.flat { color:var(--ink-3); background:var(--bg); }
+  .spark { text-align:right; } .spark svg { display:block; margin-top:4px; }
+  .lineup { display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:8px; padding:0 20px 18px; }
+  .pcard { border:1px solid var(--line); border-radius:12px; padding:10px; position:relative; overflow:hidden; transition:border-color .3s, background .3s; }
+  .pcard .t { font-size:10px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-3); display:flex; justify-content:space-between; gap:6px; white-space:nowrap; }
+  .pcard .n { font-weight:700; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pcard .s { font-size:11px; color:var(--ink-2); margin-top:2px; min-height:14px; }
+  .pcard .f { font-size:18px; font-weight:800; margin-top:6px; }
+  .pcard .gs { color:var(--live); } .pcard .gs.off { color:var(--ink-3); }
+  .pcard.hit { border-color:var(--teal); background:var(--teal-soft); } .pcard.hit.neg { border-color:#fca5a5; background:#fee2e2; }
+  .pcard .fly { position:absolute; right:10px; bottom:10px; font-weight:800; color:var(--teal-ink); animation:fly 1.1s forwards; pointer-events:none; }
+  .pcard .fly.neg { color:var(--down); }
+  @keyframes fly { from{opacity:1; transform:translateY(0)} to{opacity:0; transform:translateY(-26px)} }
+
+  /* STANDINGS */
+  .lb-head { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 10px; gap:10px; }
+  .lb-head h2 { margin:0; font-size:17px; font-weight:800; }
+  .lb-cols, .row-main { display:grid; grid-template-columns:36px 40px minmax(0,1fr) 84px 64px; gap:10px; align-items:center; }
+  .lb-cols { padding:6px 20px; border-bottom:1px solid var(--line); } .lb-cols div:nth-child(n+4) { text-align:right; }
+  .row { padding:10px 20px; border-bottom:1px solid var(--line); cursor:pointer; background:var(--card); position:relative; }
+  .row:last-child { border-bottom:0; border-radius:0 0 16px 16px; }
+  .row.me { background:#f0fdfa; box-shadow:inset 3px 0 0 var(--teal); }
+  .row.flash-up { animation:fu 1.2s; } .row.flash-down { animation:fd 1.2s; }
+  @keyframes fu { 0%{background:#a7f3d0} } @keyframes fd { 0%{background:#fecaca} }
+  .row .rk { font-weight:800; font-size:15px; } .row .mv { font-size:11px; font-weight:800; }
+  .mv.up { color:var(--up); } .mv.down { color:var(--down); } .mv.flat { color:#d1d5db; }
+  .who { display:flex; align-items:center; gap:10px; min-width:0; }
+  .av { width:32px; height:32px; border-radius:50%; color:#fff; font-weight:700; font-size:11px; display:flex; align-items:center; justify-content:center; flex:none; }
+  .who .nm { font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .you-tag { font-size:10px; font-weight:800; background:var(--teal); color:var(--black); padding:1px 6px; border-radius:999px; margin-left:6px; }
+  .row .pts { text-align:right; font-weight:800; font-size:16px; }
+  .row .pay { text-align:right; font-weight:800; color:var(--warn); } .row .pay.none { color:#d1d5db; font-weight:600; }
+  .chips { display:flex; gap:5px; flex-wrap:wrap; margin:8px 0 0 86px; }
+  .chip { font-size:11px; font-weight:600; color:var(--ink-2); background:var(--bg); border:1px solid transparent; padding:2px 7px; border-radius:999px; transition:all .3s; white-space:nowrap; }
+  .chip b { color:var(--ink); font-weight:700; margin-left:3px; }
+  .chip.live { border-color:var(--line); background:#fff; }
+  .chip.lock { color:var(--ink-3); border:1px dashed #d1d5db; background:none; }
+  .chip.reveal { animation:reveal 1.4s; } @keyframes reveal { 0%{background:var(--warn); transform:scale(1.15)} }
+  .chip.outc b { color:var(--down); }
+  .chip.hit { background:var(--teal); color:var(--black); border-color:var(--teal); transform:scale(1.08); } .chip.hit.neg { background:#fecaca; border-color:#fca5a5; }
+  .detail { display:none; margin:10px 0 2px 86px; border-top:1px dashed var(--line); padding-top:8px; }
+  .row.open .detail { display:block; } .row.open .chips { display:none; }
+  .dl { display:grid; grid-template-columns:52px minmax(0,1fr) auto 54px; gap:8px; font-size:12px; padding:3px 0; align-items:center; }
+  .dl .tl { color:var(--ink-3); font-weight:700; font-size:10px; letter-spacing:.6px; } .dl .sl { color:var(--ink-2); } .dl .fp { text-align:right; font-weight:800; }
+  .dl.hid { color:var(--ink-3); }
+
+  /* HUDDLE */
+  .feed { position:sticky; top:84px; display:flex; flex-direction:column; height:calc(100vh - 104px); min-height:480px; }
+  .feed-head { padding:14px 16px 0; border-bottom:1px solid var(--line); }
+  .feed-head h2 { margin:0 0 10px; font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px; }
+  body:not(.st-live) #feedDot { display:none; }
+  .tabs { display:flex; gap:2px; }
+  .tabs button { background:none; border:0; border-bottom:2px solid transparent; padding:8px 12px; font-weight:600; color:var(--ink-3); font-size:13px; }
+  .tabs button.on { color:var(--ink); border-color:var(--teal); }
+  .tabs .ct { font-size:10px; background:var(--live); color:#fff; border-radius:999px; padding:1px 5px; margin-left:4px; display:none; }
+  #feed { flex:1; overflow-y:auto; padding:8px 12px; }
+  .fi { display:flex; gap:10px; padding:10px 6px; border-bottom:1px solid #f1f2f4; animation:slide .35s ease-out; }
+  @keyframes slide { from{opacity:0; transform:translateY(-10px)} }
+  .fi.mine { background:#f0fdfa; border-radius:12px; border-bottom-color:transparent; box-shadow:inset 3px 0 0 var(--teal); margin:2px 0; }
+  .fi .bd { min-width:0; flex:1; } .fi .tx { line-height:1.35; } .fi .tx b { font-weight:700; }
+  .fi .sub { font-size:11px; color:var(--ink-3); margin-top:3px; }
+  .fi .tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:6px; align-items:center; }
+  .tag { font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; background:var(--bg); color:var(--ink-2); }
+  .tag.fp { background:var(--teal-soft); color:var(--teal-ink); } .tag.fp.neg { background:#fee2e2; color:var(--down); }
+  .tag.bonus { background:#fffbeb; color:#b45309; } .tag.yours { background:var(--teal); color:var(--black); }
+  .tag.up { background:#d1fae5; color:var(--up); } .tag.down { background:#fee2e2; color:var(--down); }
+  .react { margin-left:auto; background:none; border:1px solid var(--line); border-radius:999px; font-size:11px; padding:1px 7px; color:var(--ink-2); }
+  .react.on { background:#fff7ed; border-color:#fdba74; }
+  .fi.sys { justify-content:center; text-align:center; color:var(--ink-2); font-size:12px; font-weight:600; background:var(--bg); border-radius:10px; border:0; margin:6px 0; padding:8px; }
+  .fi.chat .tx { background:var(--bg); border-radius:4px 12px 12px 12px; padding:7px 10px; display:inline-block; }
+  .fi.chat.self { flex-direction:row-reverse; } .fi.chat.self .bd { text-align:right; }
+  .fi.chat.self .tx { background:var(--teal); border-radius:12px 4px 12px 12px; text-align:left; }
+  .fi.chat .who2 { font-size:11px; font-weight:700; color:var(--ink-2); margin-bottom:3px; }
+  #feed.f-plays .fi.chat, #feed.f-chat .fi.play, #feed.f-chat .fi.sys, #feed.f-mine .fi:not(.mine) { display:none; }
+  .composer { border-top:1px solid var(--line); padding:10px 12px; display:flex; gap:8px; }
+  .composer input { flex:1; border:1px solid var(--line); border-radius:999px; padding:9px 14px; font:inherit; outline:none; min-width:0; }
+  .composer input:focus { border-color:var(--teal-2); }
+  .composer button { background:var(--teal); border:0; border-radius:999px; font-weight:700; padding:0 16px; color:var(--black); }
+  .quick { display:flex; gap:6px; padding:0 12px 10px; }
+  .quick button { background:var(--bg); border:0; border-radius:999px; padding:4px 10px; font-size:14px; }
+  .composer .gifbtn { background:var(--bg); border:1px solid var(--line); font-size:11px; font-weight:800; letter-spacing:.5px; padding:0 11px; color:var(--ink-2); }
+  .composer .gifbtn.on { background:var(--black); border-color:var(--black); color:#fff; }
+  .gifpick { display:none; border-top:1px solid var(--line); padding:10px 12px; }
+  .gifpick.open { display:block; }
+  .gifpick input { width:100%; border:1px solid var(--line); border-radius:10px; padding:8px 12px; font:inherit; outline:none; margin-bottom:8px; }
+  .gifpick input:focus { border-color:var(--teal-2); }
+  .gifgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; max-height:176px; overflow-y:auto; }
+  .gifgrid .gif { width:auto; height:84px; cursor:pointer; } .gifgrid .gif:hover { outline:2px solid var(--teal); }
+  .gifgrid .gif .ge { font-size:30px; } .gifgrid .gif .gc { font-size:9px; }
+  .gifnone { grid-column:1/-1; text-align:center; color:var(--ink-3); font-size:12px; padding:18px 0; }
+  .gifhint { font-size:10px; color:var(--ink-3); margin-top:7px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .gifhint input { width:150px; flex:1; margin:0; padding:5px 9px; font-size:11px; border-radius:8px; }
+  .gifhint button { border:0; background:var(--black); color:#fff; border-radius:8px; font-size:11px; font-weight:700; padding:5px 10px; }
+  .gifhint a { color:var(--ink-2); cursor:pointer; text-decoration:underline; } .gifhint .err { color:var(--down); flex-basis:100%; }
+  .gif.real { background:var(--bg); width:auto; max-width:220px; height:auto; display:inline-block; } .gif.real img { display:block; width:100%; height:auto; max-height:180px; object-fit:cover; }
+  .gifgrid .gif.real { height:84px; max-width:none; display:block; } .gifgrid .gif.real img { height:100%; }
+  .gif { position:relative; width:190px; height:124px; border-radius:12px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; color:#fff; text-align:center; }
+  .gif .ge { font-size:46px; line-height:1; display:block; }
+  .gif .gc { font-size:12px; font-weight:900; letter-spacing:.5px; text-shadow:0 1px 3px rgba(0,0,0,.55); padding:0 6px; }
+  .gif .gb { position:absolute; top:6px; left:6px; font-size:9px; font-weight:800; background:rgba(0,0,0,.55); border-radius:4px; padding:1px 5px; }
+  .gif.a-wag .ge { animation:gWag .5s ease-in-out infinite alternate; transform-origin:50% 90%; }
+  .gif.a-pulse .ge { animation:gPulse .7s ease-in-out infinite alternate; }
+  .gif.a-bounce .ge { animation:gBounce .55s cubic-bezier(.3,0,.7,1) infinite alternate; }
+  .gif.a-shake .ge { animation:gShake .28s linear infinite alternate; }
+  @keyframes gWag { from{transform:rotate(-22deg)} to{transform:rotate(22deg)} }
+  @keyframes gPulse { from{transform:scale(.85)} to{transform:scale(1.25)} }
+  @keyframes gBounce { from{transform:translateY(-12px)} to{transform:translateY(8px) scale(1.08,.92)} }
+  @keyframes gShake { from{transform:translateX(-5px) rotate(-4deg)} to{transform:translateX(5px) rotate(4deg)} }
+  .fi.chat .tx.hasgif, .fi.chat.self .tx.hasgif { background:none; padding:0; border-radius:12px; }
+  .note { max-width:1240px; margin:-40px auto 40px; padding:0 24px; font-size:12px; color:var(--ink-3); line-height:1.5; }
+  @media (max-width:1100px) { .note { margin-top:16px; } }
+
+  @media (max-width: 980px) {
+    .wrap { grid-template-columns:1fr; padding:16px; }
+    .feed, .tray { position:static; } .feed { height:560px; }
+    .steps button span { display:none; } .wallet-pill { display:none; }
+    .you { grid-template-columns:auto 1fr; } .spark { display:none; }
+    .chips, .detail { margin-left:0; }
+    .lb-cols, .row-main { grid-template-columns:30px 28px minmax(0,1fr) 64px 48px; gap:6px; }
+    .boxes { margin-left:0; }
+  }
+</style>
+</head>
+<body class="st-picks">
+
+<header class="nav">
+  <a href="#" class="logo" aria-label="Splash Sports home"><img src="assets/splash-logo-white.svg" alt="splash sports" class="logo-img" /></a>
+  <nav class="steps" id="steps">
+    <button data-st="picks"><i>1</i><span>Make picks</span></button>
+    <button data-st="pre"><i>2</i><span>Before tip-off</span></button>
+    <button data-st="live"><i>3</i><span>Live</span></button>
+  </nav>
+  <div class="wallet-pill"><div class="av">TJ</div>$412.50</div>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <div class="hero-top">
+      <div>
+        <h1>Monday Tiers <span class="live-badge quiet" id="liveBadge">PICKS OPEN</span></h1>
+        <div class="meta">11/9 · NBA · Tiers · Pick 1 player from each of 4 tiers · Created by splash-tj</div>
+      </div>
+      <div class="controls">
+        <span class="lbl">Demo sim</span>
+        <button id="btnPlay">⏸ Pause</button>
+        <button class="spd on" data-s="1">1×</button>
+        <button class="spd" data-s="3">3×</button>
+        <button class="spd" data-s="10">10×</button>
+        <button id="btnRestart">↺ Restart</button>
+      </div>
+      <div class="boxes">
+        <div class="box"><b>8/10</b><span>Entries</span></div>
+        <div class="box"><b>$10</b><span>Entry</span></div>
+        <div class="box"><b>$72</b><span>Prizes</span></div>
+      </div>
+    </div>
+    <div class="games" id="games"></div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div>
+    <!-- STAGE 1: PICKS -->
+    <section id="secPicks">
+      <div class="pk-bar">
+        <h2>Build your lineup</h2>
+        <div class="seg" id="sortSeg"><button class="on" data-s="proj">Projection</button><button data-s="time">Tip time</button></div>
+      </div>
+      <div id="tiers"></div>
+    </section>
+
+    <!-- STAGE 2 + 3: STANDINGS -->
+    <section id="secStand">
+      <div class="panel precard" id="preCard">
+        <div class="sec-label">First game tips in</div>
+        <div class="big num" id="preClock">0:20</div>
+        <h2>Your lineup is locked in. Standings go live at tip-off.</h2>
+        <p>All 8 entries start level at 0.00. Each opponent's pick stays hidden until that player's game starts, then it appears here and starts scoring.</p>
+        <div class="acts"><button class="btn pri" id="btnTip">Skip to tip-off →</button><button class="btn sec" id="btnEdit">Edit my picks</button></div>
+        <div class="facts" id="preFacts"></div>
+      </div>
+
+      <div class="panel" id="youCard" style="margin-bottom:20px;">
+        <div class="you">
+          <div>
+            <div class="sec-label">Your position</div>
+            <div class="rank num" id="youRank">–</div>
+            <div class="delta flat" id="youDelta">Holding steady</div>
+          </div>
+          <div class="stats">
+            <div class="stat"><div class="sec-label">Fantasy pts</div><div class="v num" id="youPts">0</div></div>
+            <div class="stat"><div class="sec-label">Winning</div><div class="v gold num" id="youPay">$0</div></div>
+            <div class="stat"><div class="sec-label" id="gapLbl">Behind 1st</div><div class="v num" id="youGap">0</div></div>
+          </div>
+          <div class="spark"><div class="sec-label">Your rank tonight</div><svg id="spark" width="180" height="44"></svg></div>
+        </div>
+        <div class="lineup" id="lineup"></div>
+      </div>
+
+      <div class="panel">
+        <div class="lb-head"><h2 id="lbTitle">Standings</h2><span class="sec-label">Tap an entry for details</span></div>
+        <div class="lb-cols sec-label"><div>#</div><div></div><div>Entry</div><div>Pts</div><div>Winning</div></div>
+        <div id="lb"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PICKS TRAY -->
+  <aside class="panel tray" id="tray">
+    <h3>Your lineup <span class="sec-label" id="trayCt" style="margin-left:6px;">0/4</span></h3>
+    <div id="slots"></div>
+    <div class="tot"><div><div class="sec-label">Projected total</div><b class="num" id="trayTot">0.00</b></div><div class="sec-label" id="trayVs"></div></div>
+    <div class="bar"><i id="trayBar" style="width:0%; transition:width .4s;"></i></div>
+    <div class="checks" id="checks"></div>
+    <div class="sec-label">Your night</div>
+    <div class="night" id="night"></div>
+    <button class="btn pri" id="btnLock" disabled>Lock in lineup →</button>
+    <div class="row2"><button class="btn sec" id="btnQuick">⚡ Quick fill</button><button class="btn sec" id="btnReal">My real picks</button><button class="btn sec" id="btnClear">Clear</button></div>
+    <div class="hint">You can swap a player any time before his game tips.</div>
+  </aside>
+
+  <!-- HUDDLE -->
+  <aside class="panel feed" id="huddle">
+    <div class="feed-head">
+      <h2><span class="dot" id="feedDot"></span>Contest Huddle</h2>
+      <div class="tabs" id="tabs">
+        <button class="on" data-f="all">Live</button>
+        <button data-f="plays">Plays</button>
+        <button data-f="mine">My players</button>
+        <button data-f="chat">Chat<span class="ct" id="chatCt">0</span></button>
+      </div>
+    </div>
+    <div id="feed"></div>
+    <div class="quick" id="quick"><button>🔥</button><button>😤</button><button>💀</button><button>🫡</button><button>👀</button></div>
+    <div class="gifpick" id="gifPick"><input id="gifQ" placeholder="Search GIFs…" autocomplete="off" /><div class="gifgrid" id="gifGrid"></div><div class="gifhint" id="gifFoot"></div></div>
+    <form class="composer" id="composer"><input id="msg" placeholder="Write a message or /gif…" maxlength="300" autocomplete="off" /><button type="button" class="gifbtn" id="gifBtn" aria-label="Add a GIF">GIF</button><button>Send</button></form>
+  </aside>
+</main>
+
+<p class="note">Prototype with simulated play-by-play. Real, from the Monday Tiers contest on 11/9: the format, entry fee, resized $72 prize, scoring, the eight entrants, the five games, splash-tj's lineup, Reaves being OUT, and the opponents' picks that had been revealed at tip-off (Mobley, Kessler, Alexander-Walker). Made up: which tier most players sit in, every projection except splash-tj's four picks, opponents' still-hidden picks, all stats, and all chat messages. Player headshots are from ESPN. GIFs are animated stand-ins until a GIPHY API key is connected in the GIF picker; the key is saved only in this browser. Scoring: PTS 1 · 3PM +0.5 · REB 1.25 · AST 1.5 · STL 2 · BLK 2 · TO −0.5 · double-double +1.5 · triple-double +3.</p>
+
+<script>
+/* ================= DATA ================= */
+const TEAM_COLOR = { LAL:'#552583', ATL:'#E03A3E', CLE:'#860038', CHA:'#00788C', WAS:'#002B5C', DET:'#C8102E', SAS:'#5b6770', PHX:'#E56020', GSW:'#1D428A', NOP:'#85714D' };
+const GAME_DEFS = [ // start = sim seconds before tip once the contest goes live (compressed for the demo)
+  { away:'ATL', home:'LAL', time:'4:00 PM', slot:0, start:-10 }, { away:'CLE', home:'CHA', time:'4:00 PM', slot:0, start:-10 }, { away:'WAS', home:'DET', time:'4:00 PM', slot:0, start:-10 },
+  { away:'PHX', home:'SAS', time:'6:00 PM', slot:1, start:-1200 }, { away:'NOP', home:'GSW', time:'7:00 PM', slot:2, start:-1800 }
+];
+// event mix: 2pt, 3pt, ft, reb, ast, stl, blk, to
+const ARCH = {
+  creator:[.24,.14,.14,.14,.20,.04,.02,.08], scorer:[.28,.16,.14,.14,.14,.05,.02,.07],
+  big:[.26,.04,.12,.32,.10,.03,.10,.03], hub:[.22,.06,.10,.28,.24,.04,.02,.04],
+  wing:[.22,.18,.08,.22,.14,.08,.04,.04], shooter:[.14,.30,.06,.16,.20,.06,.02,.06]
+};
+const PLAYER_DEFS = [ // [first, last, team, tier, projection, archetype, out?]
+  ['Victor','Wembanyama','SAS',1,44.86,'big'], ['Cade','Cunningham','DET',1,46.9,'creator'], ['Donovan','Mitchell','CLE',1,43.1,'scorer'], ['Jalen','Johnson','ATL',1,42.4,'wing'],
+  ['Devin','Booker','PHX',1,41.7,'scorer'], ['Stephen','Curry','GSW',1,40.9,'shooter'], ['Trae','Young','WAS',1,40.2,'creator'],
+  ['Austin','Reaves','LAL',2,35.53,'shooter',1], ['Anthony','Davis','WAS',2,38.9,'big'], ['James','Harden','CLE',2,37.6,'creator'], ['Zion','Williamson','NOP',2,37.2,'big'],
+  ['Evan','Mobley','CLE',2,36.8,'big'], ["De'Aaron",'Fox','SAS',2,36.1,'creator'],
+  ['Yaxel','Lendeborg','GSW',3,30.21,'wing'], ['Dyson','Daniels','ATL',3,32.6,'wing'], ['Trey','Murphy III','NOP',3,32.2,'shooter'], ['Stephon','Castle','SAS',3,31.9,'creator'],
+  ['Onyeka','Okongwu','ATL',3,31.4,'big'], ['Walker','Kessler','LAL',3,30.8,'big'],
+  ['Nickeil','Alexander-Walker','ATL',4,28.80,'shooter'], ['Kyshawn','George','WAS',4,28.1,'wing'], ['Dylan','Harper','SAS',4,27.8,'creator'], ['Naz','Reid','CHA',4,27.3,'big'],
+  ['Draymond','Green','GSW',4,25.2,'hub'], ['Grayson','Allen','CHA',4,24.6,'shooter'], ['Paul','Reed','DET',4,22.4,'big']
+];
+const SHORT = { 'Murphy III':'Murphy' };
+const REAL_PICKS = ['Wembanyama','Reaves','Lendeborg','Alexander-Walker'];
+const ENTRY_DEFS = [ // real entrants; picks by last name, tier 1→4
+  ['splash-tj','TJ','linear-gradient(135deg,#a78bfa,#7dd3fc)',REAL_PICKS],
+  ['splash-jm','JM','linear-gradient(135deg,#fbbf24,#f59e0b)',['Curry','Fox','Castle','Harper']],
+  ['splash-bj','BJ','linear-gradient(135deg,#f97316,#ef4444)',['Booker','Williamson','Kessler','Green']],
+  ['splash-gs','GS','linear-gradient(135deg,#10b981,#059669)',['Wembanyama','Williamson','Murphy III','Green']],
+  ['splash-scott','SC','linear-gradient(135deg,#6366f1,#8b5cf6)',['Curry','Mobley','Lendeborg','Harper']],
+  ['splash-dp','DP','linear-gradient(135deg,#ec4899,#f43f5e)',['Wembanyama','Fox','Kessler','Green']],
+  ['splash-dc','DC','linear-gradient(135deg,#06b6d4,#3b82f6)',['Booker','Mobley','Castle','Alexander-Walker']],
+  ['splash-saam','SA','linear-gradient(135deg,#84cc16,#22c55e)',['Wembanyama','Mobley','Murphy III','Harper']]
+];
+const PRIZES = [72]; // winner-take-all, resized for 8 entries
+const EVENTS = [
+  { k:'p2', fp:2,    pts:2, tx:['hits a pull-up jumper','finishes at the rim','throws down a dunk','scores on a driving layup','knocks down a mid-range fadeaway'] },
+  { k:'p3', fp:3.5,  pts:3, tx:['hits a three-pointer','drills a three from the wing','buries a step-back three','splashes a corner three'] },
+  { k:'ft', fp:1,    pts:1, tx:['makes a free throw'] },
+  { k:'reb',fp:1.25, tx:['grabs a rebound','pulls down a board','cleans the glass'] },
+  { k:'ast',fp:1.5,  tx:['dishes an assist','finds the open man for an assist','threads a pass for an assist'] },
+  { k:'stl',fp:2,    tx:['comes up with a steal','picks a pocket for a steal'] },
+  { k:'blk',fp:2,    tx:['swats a shot','gets the block at the rim'] },
+  { k:'to', fp:-.5,  tx:['turns it over','loses the handle — turnover'] }
+];
+
+/* ================= STATE ================= */
+let rng, games, players, entries, tick, timer, preTimer, preLeft, speed = 1, playing = true, finished, rankHist, chatUnread = 0, filter = 'all';
+let stage = 'picks', sel = [null, null, null, null], sortBy = 'proj', lastYouRank = 0;
+const $ = id => document.getElementById(id);
+const pick = arr => arr[Math.floor(rng() * arr.length)];
+const ord = n => n + (['th','st','nd','rd'][(n % 100 - 20) % 10] || ['th','st','nd','rd'][n % 100] || 'th');
+const fmt = n => String(+n.toFixed(2));
+const fpStr = d => (d > 0 ? '+' : '−') + fmt(Math.abs(d)) + ' FP';
+const money = n => '$' + fmt(n);
+const byLast = l => players.find(p => p.last === l);
+function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+const pav = p => `<div class="pav" style="background:${TEAM_COLOR[p.team]}">${p.team}<img src="${p.img}" alt="" onerror="this.remove()"></div>`;
+function resetSim() { // fresh games, stats and entries; keeps the user's current picks
+  clearTimeout(timer); clearInterval(preTimer);
+  rng = mulberry(20261109); tick = 0; finished = false; rankHist = []; lastYouRank = 0;
+  games = GAME_DEFS.map((g, i) => ({ id:i, ...g, t:g.start, score:{ [g.away]:0, [g.home]:0 } }));
+  players = PLAYER_DEFS.map(([first, last, team, tier, proj, arch, out], id) => {
+    const game = games.find(g => g.away === team || g.home === team);
+    return { id, first, last, team, tier, proj, arch, out: !!out, img: 'assets/players/' + (first + ' ' + last).toLowerCase().replace(/'/g, '').replace(/[^a-z0-9]+/g, '-') + '.png', short: SHORT[last] || last, w: out ? 0 : proj / 30, game,
+      opp: game.home === team ? 'vs ' + game.away : '@ ' + game.home, fp:0, pts:0, reb:0, ast:0, stl:0, blk:0, to:0, p3:0 };
+  });
+  entries = ENTRY_DEFS.map(([user, av, color, picks], id) => ({ id, user, av, color, me: id === 0, picks: picks.map(byLast), score:0, rank:1, tied:true, mv:0, mvTick:-99 }));
+  if (sel.every(x => x !== null)) entries[0].picks = sel.map(id => players[id]);
+  const owned = new Set(entries.flatMap(e => e.picks));
+  players.forEach(p => p.owned = owned.has(p));
+}
+
+/* ================= STAGE 1: PICKS ================= */
+function renderPicks() {
+  const nextTier = sel.indexOf(null);
+  $('tiers').innerHTML = [1, 2, 3, 4].map(t => {
+    const pool = players.filter(p => p.tier === t).sort((a, b) => sortBy === 'proj' ? b.proj - a.proj : a.game.slot - b.game.slot || b.proj - a.proj);
+    const max = Math.max(...pool.map(p => p.proj)), chosen = sel[t - 1] !== null ? players[sel[t - 1]] : null;
+    return `<div class="panel tier ${chosen ? 'done' : ''} ${nextTier === t - 1 ? 'next' : ''}" id="tier${t}">
+      <div class="tier-h"><div class="tier-n">${chosen ? '✓' : 'T' + t}</div><div class="tt">Tier ${t}</div>
+        <div class="ts">${chosen ? chosen.first + ' ' + chosen.last + ' · tap another to swap' : 'Pick 1 of ' + pool.length}</div></div>
+      <div class="pk-grid">${pool.map(p => `<button class="pk ${chosen === p ? 'sel' : ''} ${p.out ? 'out' : ''}" data-id="${p.id}">
+        <span class="ck">✓</span>
+        <div class="pk-top">${pav(p)}
+          <div><div class="n">${p.first[0]}. ${p.last}${p.out ? '<span class="out-b">OUT</span>' : ''}</div><div class="s">${p.opp} · ${p.game.time}</div></div></div>
+        <div class="pk-proj"><b class="num">${p.proj.toFixed(2)}</b><span>PROJ</span></div>
+        <div class="bar"><i style="width:${(p.proj / max * 100).toFixed(0)}%"></i></div></button>`).join('')}</div></div>`;
+  }).join('');
+  renderTray();
+}
+function renderTray() {
+  const chosen = sel.map(id => id === null ? null : players[id]), n = chosen.filter(Boolean).length;
+  $('slots').innerHTML = chosen.map((p, i) => p
+    ? `<div class="slot full" data-t="${i}"><span class="tl">T${i + 1}</span>${pav(p)}
+        <div><div class="nm">${p.first[0]}. ${p.last}${p.out ? '<span class="out-b">OUT</span>' : ''}</div><div class="sb">${p.opp} · ${p.game.time}</div></div>
+        <span class="pj num">${p.proj.toFixed(2)}</span><button class="x" data-x="${i}" aria-label="Remove">✕</button></div>`
+    : `<div class="slot empty" data-t="${i}"><span class="tl">T${i + 1}</span>Pick a Tier ${i + 1} player</div>`).join('');
+  $('trayCt').textContent = n + '/4';
+  const tot = chosen.reduce((s, p) => s + (p && !p.out ? p.proj : 0), 0);
+  const best = [1, 2, 3, 4].reduce((s, t) => s + Math.max(...players.filter(p => p.tier === t && !p.out).map(p => p.proj)), 0);
+  const el = $('trayTot'); if (el.textContent !== tot.toFixed(2)) { el.textContent = tot.toFixed(2); el.classList.remove('pop'); el.offsetHeight; el.classList.add('pop'); }
+  $('trayVs').textContent = `Max possible ${best.toFixed(2)}`;
+  $('trayBar').style.width = (tot / best * 100).toFixed(0) + '%';
+  const teams = new Set(chosen.filter(Boolean).map(p => p.team)), outP = chosen.find(p => p && p.out);
+  const teamOk = teams.size >= 2 || n < 2;
+  $('checks').innerHTML =
+    `<div class="${n === 4 ? 'ok' : ''}">${n === 4 ? '✓' : '○'} ${n === 4 ? 'All 4 tiers filled' : (4 - n) + ' tier' + (4 - n > 1 ? 's' : '') + ' left to pick'}</div>` +
+    `<div class="${n >= 2 ? (teamOk ? 'ok' : 'bad') : ''}">${n >= 2 && teamOk ? '✓' : n >= 2 ? '✕' : '○'} Players from 2 or more teams</div>` +
+    (outP ? `<div class="bad">⚠ ${outP.last} is OUT and will score 0<a data-swap="${outP.tier}">Swap</a></div>` : '');
+  $('night').innerHTML = ['4:00 PM', '6:00 PM', '7:00 PM'].map((tm, s) => {
+    const ps = chosen.filter(p => p && p.game.slot === s);
+    return `<div>${tm}<b>${ps.length ? ps.map(p => p.short).join(', ') : '—'}</b></div>`;
+  }).join('');
+  $('btnLock').disabled = !(n === 4 && teams.size >= 2);
+}
+function choose(id) {
+  const p = players[id], i = p.tier - 1;
+  sel[i] = sel[i] === id ? null : id;
+  renderPicks();
+  const next = sel.indexOf(null);
+  if (sel[i] !== null && next !== -1) setTimeout(() => $('tier' + (next + 1)).scrollIntoView({ behavior:'smooth', block:'center' }), 250);
+}
+$('tiers').onclick = ev => { const b = ev.target.closest('.pk'); if (b) choose(+b.dataset.id); };
+$('slots').onclick = ev => {
+  const x = ev.target.closest('[data-x]'); if (x) { sel[+x.dataset.x] = null; renderPicks(); return; }
+  const s = ev.target.closest('.slot'); if (s) $('tier' + (+s.dataset.t + 1)).scrollIntoView({ behavior:'smooth', block:'center' });
+};
+$('checks').onclick = ev => { const a = ev.target.closest('[data-swap]'); if (a) $('tier' + a.dataset.swap).scrollIntoView({ behavior:'smooth', block:'center' }); };
+$('sortSeg').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; sortBy = b.dataset.s; [...$('sortSeg').children].forEach(x => x.classList.toggle('on', x === b)); renderPicks(); };
+$('btnQuick').onclick = () => { sel = [1, 2, 3, 4].map(t => players.filter(p => p.tier === t && !p.out).sort((a, b) => b.proj - a.proj)[0].id); renderPicks(); };
+$('btnReal').onclick = () => { sel = REAL_PICKS.map(l => byLast(l).id); renderPicks(); };
+$('btnClear').onclick = () => { sel = [null, null, null, null]; renderPicks(); };
+$('btnLock').onclick = () => setStage('pre');
+
+/* ================= STAGES ================= */
+function setStage(s) {
+  if (s !== 'picks' && sel.some(x => x === null)) sel = REAL_PICKS.map(l => byLast(l).id);
+  const from = stage;
+  stage = s; document.body.className = 'st-' + s;
+  [...$('steps').children].forEach(b => b.classList.toggle('on', b.dataset.st === s));
+  window.scrollTo(0, 0);
+  const badge = $('liveBadge');
+  if (s === 'picks') { clearTimeout(timer); clearInterval(preTimer); resetSim(); badge.className = 'live-badge quiet'; badge.textContent = 'PICKS OPEN'; renderGames(); renderPicks(); return; }
+  if (s === 'pre' || from === 'picks') startBoard();
+  if (s === 'pre') {
+    badge.className = 'live-badge quiet'; badge.textContent = 'LOCKED'; $('lbTitle').textContent = 'Standings';
+    preLeft = 20; $('preClock').textContent = '0:20';
+    preTimer = setInterval(() => { preLeft--; $('preClock').textContent = '0:' + String(Math.max(preLeft, 0)).padStart(2, '0'); if (preLeft <= 0) setStage('live'); }, 1000);
+  } else {
+    clearInterval(preTimer);
+    badge.className = 'live-badge'; badge.innerHTML = '<span class="dot"></span>LIVE'; $('lbTitle').textContent = 'Live standings';
+    playing = true; $('btnPlay').textContent = '⏸ Pause'; loop();
+  }
+  renderAll(true);
+}
+function startBoard() { // lineup locked: build the standings rows and open the huddle
+  resetSim();
+  $('feed').innerHTML = ''; $('lb').innerHTML = ''; $('lineup').innerHTML = '';
+  entries.forEach(e => { e.row = document.createElement('div'); e.row.className = 'row' + (e.me ? ' me' : ''); e.row.onclick = () => e.row.classList.toggle('open'); $('lb').appendChild(e.row); });
+  entries[0].picks.forEach(p => { const c = document.createElement('div'); c.className = 'pcard'; c.id = 'pc' + p.id; $('lineup').appendChild(c); });
+  $('preFacts').innerHTML = ['8 entries in', money(PRIZES[0]) + ' to 1st', '3 games at 4:00 PM', 'Late swap until each tip'].map(f => `<span class="fact">${f}</span>`).join('');
+  addFeed({ type:'sys', text:'🔒 Lineups are in · plays will show up here once games tip off' });
+  addFeed({ type:'chat', e:entries[1], text:'good luck everybody 🫡' });
+  addFeed({ type:'chat', e:entries[4], text:'8 of us, one winner. no pressure' });
+}
+$('steps').onclick = ev => { const b = ev.target.closest('button'); if (b && b.dataset.st !== stage) setStage(b.dataset.st); };
+$('btnTip').onclick = () => setStage('live');
+$('btnEdit').onclick = () => setStage('picks');
+
+/* ================= SIM ================= */
+const isLive = g => g.t >= 0 && g.t < 2880;
+const hidden = (e, p) => !e.me && p.game.t < 0;
+function clock(g) {
+  if (g.t < 0) return { cls:'pre', txt: stage === 'live' && g.t > -600 ? 'Tips in ' + Math.ceil(-g.t / 60) + ' min' : g.time };
+  if (g.t >= 2880) return { cls:'fin', txt:'FINAL' };
+  const q = Math.floor(g.t / 720) + 1, r = 720 - g.t % 720;
+  return { cls:'', txt:`Q${q} ${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}` };
+}
+function rank() { // ties share a rank ("T1") and split the prize, as on the real standings page
+  entries.forEach(e => e.score = e.picks.reduce((s, p) => s + p.fp, 0));
+  const sorted = [...entries].sort((a, b) => b.score - a.score || a.id - b.id);
+  sorted.forEach(e => {
+    const grp = sorted.filter(o => o.score === e.score);
+    e.rank = sorted.indexOf(grp[0]) + 1; e.tied = grp.length > 1;
+    e.pay = grp.reduce((s, _, i) => s + (PRIZES[e.rank - 1 + i] || 0), 0) / grp.length;
+  });
+  return sorted;
+}
+function step(sink) {
+  tick++;
+  const tipped = [];
+  games.forEach(g => {
+    const was = g.t; g.t += 10;
+    if (was < 0 && g.t >= 0) tipped.push(g);
+    if (was < 2880 && g.t >= 2880) sink.push({ type:'sys', text:`Final: ${g.away} ${g.score[g.away]}, ${g.home} ${g.score[g.home]}` });
+    if (!isLive(g)) return;
+    if (rng() < .17) g.score[rng() < .5 ? g.away : g.home] += 2; // points from players outside the tiers
+    if (rng() < .36) { const it = playEvent(g); if (it) sink.push(it); }
+  });
+  if (tipped.length) {
+    const shown = new Set(entries.filter(e => !e.me).flatMap(e => e.picks.filter(p => tipped.includes(p.game))));
+    sink.unshift({ type:'sys', reveal:[...shown], text:`🏀 Tip-off: ${tipped.map(g => g.away + ' @ ' + g.home).join(', ')}` + (shown.size ? ` · picks revealed: ${[...shown].map(p => p.short).join(', ')}` : '') });
+  }
+  rankHist.push(entries[0].rank);
+  if (!finished && games.every(g => g.t >= 2880)) {
+    finished = true;
+    const w = rank().filter(e => e.rank === 1);
+    sink.push({ type:'sys', text:`🏆 Contest final — ${w.map(e => e.user).join(' and ')} win${w.length > 1 ? '' : 's'} ${money(w[0].pay)} with ${fmt(w[0].score)} pts` });
+  }
+}
+function playEvent(g) {
+  const pool = players.filter(p => p.game === g && p.w);
+  let r = rng() * pool.reduce((s, p) => s + p.w, 0), p = pool[0];
+  for (const c of pool) { if ((r -= c.w) <= 0) { p = c; break; } }
+  let x = rng(), ei = 0; const mix = ARCH[p.arch];
+  while (ei < 7 && (x -= mix[ei]) > 0) ei++;
+  const ev = EVENTS[ei], text = pick(ev.tx);
+  const before = new Map(entries.map(e => [e.id, e.rank])), leadersBefore = entries.filter(e => e.rank === 1);
+  p.fp += ev.fp;
+  if (ev.pts) { p.pts += ev.pts; g.score[p.team] += ev.pts; if (ev.k === 'p3') p.p3++; } else p[ev.k]++;
+  let bonus = 0, bonusTx = '';
+  const dbl = [p.pts, p.reb, p.ast, p.stl, p.blk].filter(v => v >= 10).length;
+  if (dbl >= 2 && !p.dd) { p.dd = 1; bonus += 1.5; bonusTx = 'Double-double'; }
+  if (dbl >= 3 && !p.td) { p.td = 1; bonus += 3; bonusTx = 'Triple-double'; }
+  p.fp += bonus;
+  if (!p.owned) return null; // only plays by players someone in the contest picked reach the feed
+  rank();
+  entries.forEach(e => { const d = before.get(e.id) - e.rank; if (d) { e.mv = d; e.mvTick = tick; } });
+  const me = entries[0], leaders = entries.filter(e => e.rank === 1);
+  return {
+    type:'play', p, text, clock: clock(g).txt, d: ev.fp + bonus, bonus: bonusTx,
+    mine: me.picks.includes(p), owners: entries.filter(e => e.picks.includes(p)),
+    from: before.get(0), to: me.rank,
+    lead: leaders.length === 1 && !(leadersBefore.length === 1 && leadersBefore[0] === leaders[0]) ? leaders[0] : null
+  };
+}
+
+/* ================= RENDER ================= */
+const statLine = p => p.out ? 'Out · did not play' : [[p.pts,'PTS'],[p.reb,'REB'],[p.ast,'AST'],[p.stl,'STL'],[p.blk,'BLK']].filter(s => s[0]).map(s => s.join(' ')).join(' · ') || (p.game.t < 0 ? 'Not started' : '—');
+const rkLabel = e => (e.tied ? 'T' : '') + e.rank;
+function renderGames() {
+  $('games').innerHTML = games.map(g => { const c = clock(g); return `<div class="game"><div class="st ${c.cls}">${c.cls ? '' : '<span class="dot"></span>'}${c.txt}</div>` +
+    [g.away, g.home].map(t => `<div class="tm"><span><i class="sw" style="background:${TEAM_COLOR[t]}"></i>${t}</span><span class="num">${g.t < 0 ? '' : g.score[t]}</span></div>`).join('') + '</div>'; }).join('');
+}
+function renderBoard(instant) {
+  const sorted = rank(), lb = $('lb');
+  const firstTop = new Map(entries.map(e => [e, e.row.getBoundingClientRect().top]));
+  sorted.forEach(e => {
+    const fresh = tick - e.mvTick < 8 && e.mv;
+    e.row.innerHTML = `<div class="row-main">
+      <div class="rk num">${rkLabel(e)}</div>
+      <div class="mv ${fresh ? (e.mv > 0 ? 'up' : 'down') : 'flat'}">${fresh ? (e.mv > 0 ? '▲' : '▼') + Math.abs(e.mv) : '–'}</div>
+      <div class="who"><div class="av" style="background:${e.color}">${e.av}</div><div class="nm">${e.user}${e.me ? '<span class="you-tag">YOU</span>' : ''}</div></div>
+      <div class="pts num">${e.score.toFixed(2)}</div>
+      <div class="pay num ${e.pay ? '' : 'none'}">${e.pay ? money(e.pay) : '—'}</div></div>
+      <div class="chips">${e.picks.map(p => hidden(e, p) ? `<span class="chip lock">🔒 Tier ${p.tier}</span>`
+        : `<span class="chip ${isLive(p.game) ? 'live' : ''} ${p.out ? 'outc' : ''}" data-p="${p.id}"><img class="cav" src="${p.img}" alt="" style="background:${TEAM_COLOR[p.team]}" onerror="this.remove()">${p.short}<b class="num">${p.out ? 'OUT' : fmt(p.fp)}</b></span>`).join('')}</div>
+      <div class="detail">${e.picks.map(p => hidden(e, p) ? `<div class="dl hid"><span class="tl">TIER ${p.tier}</span><span>🔒 Shown on game start</span><span></span><span></span></div>`
+        : `<div class="dl"><span class="tl">TIER ${p.tier}</span><span><b>${p.first} ${p.last}</b> · ${p.team}</span><span class="sl">${statLine(p)}</span><span class="fp num">${fmt(p.fp)}</span></div>`).join('')}</div>`;
+  });
+  if (sorted.some((e, i) => lb.children[i] !== e.row)) {
+    sorted.forEach(e => lb.appendChild(e.row));
+    if (!instant) entries.forEach(e => {
+      const dy = firstTop.get(e) - e.row.getBoundingClientRect().top;
+      if (!dy) return;
+      e.row.style.transition = 'none'; e.row.style.transform = `translateY(${dy}px)`; e.row.style.zIndex = dy > 0 ? 2 : 1;
+      e.row.offsetHeight;
+      e.row.style.transition = 'transform .7s cubic-bezier(.2,.8,.2,1)'; e.row.style.transform = '';
+      e.row.classList.remove('flash-up', 'flash-down'); e.row.offsetHeight; e.row.classList.add(dy > 0 ? 'flash-up' : 'flash-down');
+    });
+  }
+}
+function renderYou() {
+  const me = entries[0], sorted = [...entries].sort((a, b) => b.score - a.score || a.id - b.id), rk = $('youRank');
+  rk.innerHTML = `${me.tied ? 'T-' : ''}${ord(me.rank)}<small>of ${entries.length}</small>`;
+  if (lastYouRank && lastYouRank !== me.rank) { rk.classList.remove('pop'); rk.offsetHeight; rk.classList.add('pop'); }
+  lastYouRank = me.rank;
+  const fresh = tick - me.mvTick < 8 && me.mv, d = $('youDelta');
+  d.className = 'delta ' + (fresh ? (me.mv > 0 ? 'up' : 'down') : 'flat');
+  d.textContent = fresh ? (me.mv > 0 ? `▲ Up ${me.mv} spot${me.mv > 1 ? 's' : ''}` : `▼ Down ${-me.mv} spot${me.mv < -1 ? 's' : ''}`) : 'Holding steady';
+  $('youPts').textContent = me.score.toFixed(2);
+  $('youPay').textContent = money(me.pay);
+  const top = sorted[0].score, second = (sorted.find(e => e.score < top) || sorted[0]).score;
+  if (me.rank === 1) { $('gapLbl').textContent = me.tied ? 'Tied for 1st' : 'Lead over 2nd'; $('youGap').textContent = me.tied ? '0.00' : '+' + (me.score - second).toFixed(2); }
+  else { $('gapLbl').textContent = 'Behind 1st'; $('youGap').textContent = (top - me.score).toFixed(2); }
+  me.picks.forEach(p => {
+    const c = $('pc' + p.id), g = clock(p.game);
+    [...c.children].forEach(ch => { if (!ch.classList.contains('fly')) ch.remove(); });
+    c.insertAdjacentHTML('afterbegin', `<div class="t"><span>Tier ${p.tier}</span><span class="gs ${g.cls || p.out ? 'off' : ''}">${p.out ? 'OUT' : g.cls === 'pre' ? p.game.time : g.cls ? 'Final' : '● ' + g.txt.split(' ')[0]}</span></div>
+      <div class="pr">${pav(p)}<div class="pi"><div class="n">${p.first[0]}. ${p.short}</div><div class="s">${p.team} · ${p.out ? 'Out tonight' : p.game.t < 0 ? 'Not started' : `${p.pts} PTS · ${p.reb} REB · ${p.ast} AST`}</div></div></div><div class="f num">${fmt(p.fp)}</div>`);
+  });
+  const h = rankHist.slice(-140), n = entries.length;
+  $('spark').innerHTML = h.length > 1 ? `<polyline fill="none" stroke="#14E0C8" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="${h.map((r, i) => `${(i / (h.length - 1) * 172 + 4).toFixed(1)},${((r - 1) / (n - 1) * 34 + 5).toFixed(1)}`).join(' ')}"/>
+    <circle cx="176" cy="${((h[h.length - 1] - 1) / (n - 1) * 34 + 5).toFixed(1)}" r="4" fill="#0a0a0c" stroke="#14E0C8" stroke-width="2"/>` : '';
+}
+function renderAll(instant) { renderGames(); renderBoard(instant); renderYou(); }
+function flash(p, d) {
+  document.querySelectorAll(`.chip[data-p="${p.id}"]`).forEach(c => { c.classList.add('hit'); if (d < 0) c.classList.add('neg'); setTimeout(() => c.classList.remove('hit', 'neg'), 1100); });
+  const c = $('pc' + p.id); if (!c) return;
+  c.classList.add('hit'); if (d < 0) c.classList.add('neg');
+  const f = document.createElement('div'); f.className = 'fly' + (d < 0 ? ' neg' : ''); f.textContent = fpStr(d).replace(' FP', ''); c.appendChild(f);
+  setTimeout(() => { c.classList.remove('hit', 'neg'); f.remove(); }, 1100);
+}
+
+/* ================= HUDDLE FEED ================= */
+function addFeed(it) {
+  const el = document.createElement('div'), feed = $('feed');
+  if (it.type === 'sys') { el.className = 'fi sys'; el.textContent = it.text; }
+  else if (it.type === 'chat') {
+    el.className = 'fi chat' + (it.e.me ? ' self' : '');
+    el.innerHTML = `<div class="av" style="background:${it.e.color}">${it.e.av}</div><div class="bd"><div class="who2">${it.e.user}</div><div class="tx"></div></div>`;
+    if (it.gif) { const tx = el.querySelector('.tx'); tx.classList.add('hasgif'); tx.innerHTML = gifHTML(it.gif); }
+    else el.querySelector('.tx').textContent = it.text;
+    if (filter !== 'chat' && filter !== 'all' && !it.e.me) { chatUnread++; $('chatCt').textContent = chatUnread; $('chatCt').style.display = 'inline'; }
+  } else {
+    const p = it.p;
+    el.className = 'fi play' + (it.mine ? ' mine' : '');
+    let tags = `<span class="tag fp ${it.d < 0 ? 'neg' : ''}">${fpStr(it.d)}</span>`;
+    if (it.bonus) tags += `<span class="tag bonus">🎉 ${it.bonus} bonus</span>`;
+    if (it.mine) tags += `<span class="tag yours">YOUR PICK</span>`;
+    tags += `<span class="tag">${(it.owners.length / entries.length * 100).toFixed(1)}% picked</span>`;
+    if (it.to < it.from) tags += `<span class="tag up">▲ You climb to ${ord(it.to)}</span>`;
+    if (it.to > it.from) tags += `<span class="tag down">▼ You slip to ${ord(it.to)}</span>`;
+    el.innerHTML = `${pav(p)}<div class="bd">
+      <div class="tx"><b>${p.first} ${p.last}</b> ${it.text}</div>
+      <div class="sub">${it.clock} · ${statLine(p)} · ${fmt(p.fp)} FP</div>
+      <div class="tags">${tags}<button class="react" data-n="${Math.floor(Math.random() * 3)}">🔥 <span></span></button></div></div>`;
+    const rb = el.querySelector('.react'); rb.querySelector('span').textContent = rb.dataset.n > 0 ? rb.dataset.n : '';
+    rb.onclick = () => { const on = rb.classList.toggle('on'); rb.dataset.n = +rb.dataset.n + (on ? 1 : -1); rb.querySelector('span').textContent = rb.dataset.n > 0 ? rb.dataset.n : ''; };
+  }
+  feed.prepend(el);
+  if (it.lead) addFeed({ type:'sys', text:`👑 ${it.lead.me ? 'You take' : it.lead.user + ' takes'} the lead` });
+  while (feed.children.length > 160) feed.lastChild.remove();
+}
+/* GIFs: animated stand-ins for a real GIF provider's results */
+const GIFS = [
+  ['wag', '☝️', 'NO, NO, NO', 'mutombo block denied finger wag not in my house', 'wag', 'linear-gradient(135deg,#1e3a8a,#b91c1c)'],
+  ['fire', '🔥', "HE'S ON FIRE", 'fire hot heat cooking heating up', 'pulse', 'linear-gradient(135deg,#7c2d12,#f59e0b)'],
+  ['splash', '💦', 'SPLASH!', 'three splash bang shooter water', 'bounce', 'linear-gradient(135deg,#064f47,#10c9b3)'],
+  ['dunk', '🏀', 'POSTERIZED', 'dunk slam poster jam basketball', 'bounce', 'linear-gradient(135deg,#431407,#ea580c)'],
+  ['goat', '🐐', 'THE GOAT', 'goat greatest legend', 'pulse', 'linear-gradient(135deg,#3b0764,#a855f7)'],
+  ['crown', '👑', 'FIRST PLACE', 'crown king first lead winning', 'pulse', 'linear-gradient(135deg,#713f12,#eab308)'],
+  ['money', '💸', 'PAY ME', 'money cash pay win prize', 'bounce', 'linear-gradient(135deg,#14532d,#22c55e)'],
+  ['eyes', '👀', 'SCOREBOARD', 'eyes look scoreboard watching side eye', 'shake', 'linear-gradient(135deg,#0f172a,#475569)'],
+  ['cry', '😭', 'PAIN.', 'cry sad pain crying tears', 'shake', 'linear-gradient(135deg,#172554,#3b82f6)'],
+  ['clown', '🤡', 'BAD PICK', 'clown bad pick fraud', 'wag', 'linear-gradient(135deg,#831843,#f43f5e)'],
+  ['shrug', '🤷', 'IT IS WHAT IT IS', 'shrug whatever oh well', 'wag', 'linear-gradient(135deg,#1f2937,#6b7280)'],
+  ['sleep', '😴', 'WAKE UP', 'sleep sleeping wake up cold bored', 'pulse', 'linear-gradient(135deg,#1e1b4b,#6366f1)']
+].map(([key, e, cap, tags, anim, bg]) => ({ key, e, cap, tags, anim, bg }));
+const gif = k => GIFS.find(g => g.key === k), rpick = a => a[Math.floor(Math.random() * a.length)];
+const gifHTML = (g, i = 0) => g.url
+  ? `<div class="gif real" data-i="${i}"><img src="${g.small || g.url}" alt="" loading="lazy"></div>`
+  : `<div class="gif a-${g.anim}" data-i="${i}" style="background:${g.bg}" title="${g.cap}"><span class="gb">GIF</span><span class="ge">${g.e}</span><span class="gc">${g.cap}</span></div>`;
+function findGifs(q) {
+  const words = q.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  return GIFS.filter(g => words.every(w => (g.cap + ' ' + g.tags + ' ' + g.key).toLowerCase().includes(w)));
+}
+/* GIPHY: real search when an API key is saved in this browser; stand-ins otherwise */
+let giphyKey = ''; try { giphyKey = localStorage.getItem('giphyKey') || ''; } catch (e) {}
+let gifResults = [], gifSeq = 0, gifTimer, gifErr = '';
+const realCache = {}, REAL_Q = { wag:'mutombo finger wag', fire:'nba on fire', splash:'three pointer splash', dunk:'nba dunk', goat:'goat', crown:'crown king', money:'pay me money', eyes:'side eye', cry:'crying', clown:'clown', shrug:'shrug', sleep:'falling asleep' };
+async function giphy(q, limit = 12) {
+  const r = await fetch(`https://api.giphy.com/v1/gifs/${q ? 'search' : 'trending'}?api_key=${encodeURIComponent(giphyKey)}&limit=${limit}&rating=pg-13${q ? '&q=' + encodeURIComponent(q) : ''}`);
+  if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? 'GIPHY rejected that API key' : r.status === 429 ? 'GIPHY rate limit reached' : 'GIPHY error ' + r.status);
+  return (await r.json()).data.map(d => ({ url: d.images.fixed_height.url, small: d.images.fixed_height_small.url }));
+}
+async function searchGifs(q) {
+  if (!giphyKey) return findGifs(q);
+  try { const res = await giphy(q.trim()); gifErr = ''; return res; }
+  catch (e) { gifErr = (e.message.startsWith('GIPHY') ? e.message : 'Could not reach GIPHY') + ', showing stand-ins'; return findGifs(q); }
+  finally { renderGifFoot(); }
+}
+async function renderGifs(q) {
+  const seq = ++gifSeq, res = await searchGifs(q); if (seq !== gifSeq) return;
+  gifResults = res;
+  $('gifGrid').innerHTML = res.length ? res.map(gifHTML).join('') : `<div class="gifnone">No GIFs match “${q.trim().replace(/[<>&]/g, '')}”</div>`;
+}
+function renderGifFoot() {
+  $('gifFoot').innerHTML = (giphyKey
+    ? `<span>Powered by <b>GIPHY</b></span><a id="gifDisc">Disconnect</a>`
+    : `<span>Stand-in GIFs.</span><input id="gifKey" type="password" placeholder="Paste a GIPHY API key" autocomplete="off"><button type="button" id="gifConn">Connect</button>`)
+    + (gifErr ? `<span class="err">${gifErr}</span>` : '');
+}
+async function connectGiphy(key) {
+  giphyKey = key.trim(); if (!giphyKey) return;
+  try { await giphy('', 1); gifErr = ''; try { localStorage.setItem('giphyKey', giphyKey); } catch (e) {} }
+  catch (e) { gifErr = e.message.startsWith('GIPHY') ? e.message : 'Could not reach GIPHY'; giphyKey = ''; }
+  renderGifFoot(); renderGifs($('gifQ').value);
+}
+function oppGif(keys) { // opponents post real GIFs once GIPHY is connected and that search is cached
+  const k = rpick(keys);
+  if (giphyKey && !realCache[k]) { realCache[k] = []; giphy(REAL_Q[k], 6).then(r => realCache[k] = r).catch(() => { delete realCache[k]; }); }
+  return (giphyKey && realCache[k] && realCache[k].length && rpick(realCache[k])) || gif(k);
+}
+function openGifs(open, q) {
+  $('gifPick').classList.toggle('open', open); $('gifBtn').classList.toggle('on', open);
+  if (open) { if (q !== undefined) $('gifQ').value = q; renderGifFoot(); renderGifs($('gifQ').value); }
+}
+const CHEER_G = ['fire', 'splash', 'dunk', 'goat', 'money'], GROAN_G = ['cry', 'clown'], SALTY_G = ['eyes', 'shrug', 'sleep'], REPLY_G = ['eyes', 'shrug', 'wag', 'sleep'];
+const CHEER = [p => `${p.short.toUpperCase()} 🔥🔥`, p => `that ${p.short} pick is paying off`, () => `let's gooo`, p => `${p.short} is cooking tonight 👨‍🍳`, () => `keep feeding him`];
+const GROAN = [p => `cmon ${p.short} 🤦`, p => `${p.short} take care of the ball pls`];
+const SALTY = [p => `nobody's guarding ${p.short} apparently`, p => `ok ${p.short} can cool off now`, () => `this board is moving way too fast 😅`];
+const REPLY = ['😂😂', 'scoreboard 👀', 'talk to me when you\'re in first', 'bold words', 'long way to go', '🫡'];
+function maybeChat(it) {
+  if (it.type !== 'play' || Math.random() > .16) return;
+  const owners = it.owners.filter(e => !e.me), rivals = entries.filter(e => !e.me && !it.owners.includes(e));
+  let e, line, gifs;
+  if (it.d < 0) { if (!owners.length) return; e = rpick(owners); line = GROAN; gifs = GROAN_G; }
+  else if (it.d >= 2 && owners.length && Math.random() < .7) { e = rpick(owners); line = CHEER; gifs = /block/i.test(it.text) ? ['wag'] : CHEER_G; }
+  else if (it.d >= 3 && rivals.length) { e = rpick(rivals); line = SALTY; gifs = SALTY_G; }
+  else return;
+  const msg = Math.random() < .35 ? { gif: oppGif(gifs) } : { text: rpick(line)(it.p) };
+  setTimeout(() => addFeed({ type:'chat', e, ...msg }), 700 / speed);
+}
+function reply() {
+  $('feed').scrollTop = 0;
+  const msg = Math.random() < .35 ? { gif: oppGif(REPLY_G) } : { text: rpick(REPLY) };
+  setTimeout(() => addFeed({ type:'chat', e: rpick(entries.filter(e => !e.me)), ...msg }), 1400);
+}
+function sendGif(g) { addFeed({ type:'chat', e:entries[0], gif:g }); openGifs(false); $('msg').value = ''; reply(); }
+function say(text) {
+  text = text.trim(); if (!text) return;
+  const m = text.match(/^\/gif\b\s*(.*)$/i);
+  if (m) { if (!m[1]) openGifs(true, ''); else searchGifs(m[1]).then(res => res[0] ? sendGif(res[0]) : openGifs(true, m[1])); return; }
+  addFeed({ type:'chat', e:entries[0], text }); openGifs(false); $('msg').value = '';
+  reply();
+}
+
+/* ================= LOOP + CONTROLS ================= */
+function loop() {
+  clearTimeout(timer);
+  if (stage !== 'live' || !playing || finished) return;
+  timer = setTimeout(() => {
+    const sink = []; step(sink);
+    sink.forEach(it => { addFeed(it); maybeChat(it); });
+    renderAll(false);
+    sink.forEach(it => {
+      if (it.type === 'play') flash(it.p, it.d);
+      if (it.reveal) it.reveal.forEach(p => document.querySelectorAll(`.chip[data-p="${p.id}"]`).forEach(c => c.classList.add('reveal')));
+    });
+    if (finished) { $('liveBadge').className = 'live-badge quiet'; $('liveBadge').textContent = 'FINAL'; }
+    loop();
+  }, 1500 / speed);
+}
+$('btnPlay').onclick = () => { playing = !playing; $('btnPlay').textContent = playing ? '⏸ Pause' : '▶ Play'; loop(); };
+$('btnRestart').onclick = () => { startBoard(); setStage('live'); };
+document.querySelectorAll('.spd').forEach(b => b.onclick = () => { speed = +b.dataset.s; document.querySelectorAll('.spd').forEach(x => x.classList.toggle('on', x === b)); loop(); });
+$('tabs').onclick = ev => { const b = ev.target.closest('button'); if (!b) return;
+  filter = b.dataset.f; [...$('tabs').children].forEach(x => x.classList.toggle('on', x === b));
+  $('feed').className = filter === 'all' ? '' : 'f-' + filter; $('feed').scrollTop = 0;
+  if (filter === 'chat' || filter === 'all') { chatUnread = 0; $('chatCt').style.display = 'none'; } };
+$('composer').onsubmit = ev => { ev.preventDefault(); say($('msg').value); };
+const lazyGifs = q => { clearTimeout(gifTimer); gifTimer = setTimeout(() => renderGifs(q), giphyKey ? 350 : 0); };
+$('msg').oninput = () => { const m = $('msg').value.match(/^\/gif\b\s*(.*)$/i); if (m) { if (!$('gifPick').classList.contains('open')) openGifs(true, m[1]); else { $('gifQ').value = m[1]; lazyGifs(m[1]); } } };
+$('gifFoot').onclick = ev => {
+  if (ev.target.id === 'gifConn') connectGiphy($('gifKey').value);
+  if (ev.target.id === 'gifDisc') { giphyKey = ''; gifErr = ''; try { localStorage.removeItem('giphyKey'); } catch (e) {} renderGifFoot(); renderGifs($('gifQ').value); }
+};
+$('gifFoot').onkeydown = ev => { if (ev.target.id === 'gifKey' && ev.key === 'Enter') { ev.preventDefault(); connectGiphy(ev.target.value); } };
+$('gifBtn').onclick = () => { const open = !$('gifPick').classList.contains('open'); openGifs(open, ''); if (open) $('gifQ').focus(); };
+$('gifQ').oninput = () => lazyGifs($('gifQ').value);
+$('gifQ').onkeydown = ev => { if (ev.key === 'Enter') { ev.preventDefault(); if (gifResults[0]) sendGif(gifResults[0]); } if (ev.key === 'Escape') openGifs(false); };
+$('gifGrid').onclick = ev => { const t = ev.target.closest('.gif'); if (t && gifResults[t.dataset.i]) sendGif(gifResults[t.dataset.i]); };
+$('quick').onclick = ev => { if (ev.target.tagName === 'BUTTON') say(ev.target.textContent); };
+
+resetSim();
+setStage('picks');
+</script>
+</body>
+</html>
