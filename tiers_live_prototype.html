@@ -54,6 +54,10 @@
   .game .st.pre, .game .st.fin { color:#8a8f99; }
   .game .tm { display:flex; justify-content:space-between; font-weight:700; font-size:14px; padding:1px 0; }
   .game .tm span:first-child { display:flex; align-items:center; gap:8px; }
+  .tlogo { width:16px; height:16px; object-fit:contain; vertical-align:-3px; margin-right:4px; }
+  .game .tlogo { width:24px; height:24px; margin:0; vertical-align:middle; }
+  .pop-h .tb { position:absolute; right:10px; top:8px; width:36px; height:36px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+  .pop-h .tb img { width:26px; height:26px; margin:0; object-fit:contain; filter:none; align-self:center; }
   .sw { width:10px; height:10px; border-radius:3px; display:inline-block; }
 
   /* LAYOUT */
@@ -327,7 +331,7 @@
   .pop-h img { height:88px; width:auto; align-self:flex-end; display:block; filter:drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
   .pop-h > div { padding-bottom:12px; min-width:0; } .pop-h b { font-size:17px; font-weight:800; letter-spacing:-.3px; display:block; }
   .pop-h .tl { font-size:10px; font-weight:800; letter-spacing:1px; opacity:.8; } .pop-h .sb { font-size:12px; opacity:.85; margin-top:1px; }
-  .pop-h .out-b { position:absolute; top:10px; right:10px; }
+  .pop-h .out-b { position:absolute; top:17px; right:54px; }
   .pop-b { padding:12px 14px 14px; }
   .br { display:grid; grid-template-columns:34px 68px 1fr 50px; gap:8px; align-items:center; font-size:12px; padding:2.5px 0; }
   .br .k { font-weight:800; font-size:11px; } .br .v { color:var(--ink-3); } .br .f { text-align:right; font-weight:700; }
@@ -537,7 +541,7 @@
 <div class="ticker" id="ticker"></div>
 <div id="phoneWrap"><div class="phone"><iframe id="phoneFrame" title="Mobile preview"></iframe></div><div class="sec-label">Mobile preview · 390 px wide · tap and scroll inside the phone</div></div>
 
-<p class="note">Prototype with simulated play-by-play. Real, from the Monday Tiers contest on 11/9: the format, entry fee, resized $72 prize, scoring, the eight entrants, the five games, splash-tj's lineup, Reaves being OUT, and the opponents' picks that had been revealed at tip-off (Mobley, Kessler, Alexander-Walker). Made up: which tier most players sit in, every projection except splash-tj's four picks, opponents' still-hidden picks, all stats, and all chat messages. Each player's projected stat line and last-5 games in the pick preview, and the 9:00 PM tiers countdown, are also made up. Player headshots are from ESPN. GIFs are animated stand-ins until a GIPHY API key is connected in the GIF picker; the key is saved only in this browser. Scoring: PTS 1 · 3PM +0.5 · REB 1.25 · AST 1.5 · STL 2 · BLK 2 · TO −0.5 · double-double +1.5 · triple-double +3.</p>
+<p class="note">Prototype with simulated play-by-play. Real, from the Monday Tiers contest on 11/9: the format, entry fee, resized $72 prize, scoring, the eight entrants, the five games, splash-tj's lineup, Reaves being OUT, and the opponents' picks that had been revealed at tip-off (Mobley, Kessler, Alexander-Walker). Made up: which tier most players sit in, every projection except splash-tj's four picks, opponents' still-hidden picks, all stats, and all chat messages. Each player's projected stat line and last-5 games in the pick preview, and the 9:00 PM tiers countdown, are also made up. Player headshots and NBA team logos are from ESPN. GIFs are animated stand-ins until a GIPHY API key is connected in the GIF picker; the key is saved only in this browser. Scoring: PTS 1 · 3PM +0.5 · REB 1.25 · AST 1.5 · STL 2 · BLK 2 · TO −0.5 · double-double +1.5 · triple-double +3.</p>
 
 <script>
 /* ================= DATA ================= */
@@ -598,6 +602,7 @@ const money = n => '$' + fmt(n);
 const byLast = l => players.find(p => p.last === l);
 function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
+const logo = (t, dark) => `<img class="tlogo" src="assets/teams/${t}${dark ? '-dark' : ''}.png" alt="${t}" onerror="this.remove()">`;
 const pav = p => `<div class="pav" style="background:${TEAM_COLOR[p.team]}">${p.team}<img src="${p.img}" alt="" onerror="this.remove()"></div>`;
 function resetSim() { // fresh games, stats and entries; keeps the user's current picks
   clearTimeout(timer); clearInterval(preTimer);
@@ -626,7 +631,7 @@ function renderPicks() {
       <div class="pk-grid">${pool.map((p, j) => `<button class="pk ${chosen === p ? 'sel' : ''} ${p.out ? 'out' : ''}" data-id="${p.id}" style="--i:${(t - 1) * 3 + j}">
         <span class="ck">✓</span>
         <div class="pk-top">${pav(p)}
-          <div><div class="n">${p.first[0]}. ${p.last}${p.out ? '<span class="out-b">OUT</span>' : ''}</div><div class="s">${p.opp} · ${p.game.time}</div></div></div>
+          <div><div class="n">${p.first[0]}. ${p.last}${p.out ? '<span class="out-b">OUT</span>' : ''}</div><div class="s">${logo(p.team)}${p.opp} · ${p.game.time}</div></div></div>
         <div class="pk-proj"><b class="num">${p.proj.toFixed(2)}</b><span>PROJ</span>${!p.out && recent(p).reduce((s, g) => s + g.fp, 0) / 5 > p.proj * 1.04 ? '<em class="hot" style="font-style:normal">🔥 Hot</em>' : ''}</div>
         <div class="bar"><i style="width:${(p.proj / max * 100).toFixed(0)}%"></i></div></button>`).join('')}</div></div>`;
   }).join('');
@@ -636,7 +641,7 @@ function renderTray() {
   const chosen = sel.map(id => id === null ? null : players[id]), n = chosen.filter(Boolean).length;
   $('slots').innerHTML = chosen.map((p, i) => p
     ? `<div class="slot full" data-t="${i}"><span class="tl">T${i + 1}</span>${pav(p)}
-        <div><div class="nm">${p.first[0]}. ${p.last}${p.out ? '<span class="out-b">OUT</span>' : ''}</div><div class="sb">${p.opp} · ${p.game.time}</div></div>
+        <div><div class="nm">${p.first[0]}. ${p.last}${p.out ? '<span class="out-b">OUT</span>' : ''}</div><div class="sb">${logo(p.team)}${p.opp} · ${p.game.time}</div></div>
         <span class="pj num">${p.proj.toFixed(2)}</span><button class="x" data-x="${i}" aria-label="Remove">✕</button></div>`
     : `<div class="slot empty" data-t="${i}"><span class="tl">T${i + 1}</span>Pick a Tier ${i + 1} player</div>`).join('');
   $('trayCt').textContent = n + '/4';
@@ -680,7 +685,7 @@ function popHTML(p, sheet) {
   const rows = statProj(p), mx = Math.max(...rows.map(r => Math.abs(r.fp))), rec = recent(p), rmx = Math.max(p.proj, ...rec.map(g => g.fp)) * 1.06;
   const beat = rec.filter(g => g.fp >= p.proj).length, avg = rec.reduce((s, g) => s + g.fp, 0) / 5, cur = sel[p.tier - 1];
   return `<div class="pop-h" style="background:${TEAM_COLOR[p.team]}"><img src="${p.img}" alt="" onerror="this.remove()">
-      <div><div class="tl">TIER ${p.tier} · ${p.team}</div><b>${p.first} ${p.last}</b><div class="sb">${p.opp} · ${p.game.time}</div></div>${p.out ? '<span class="out-b">OUT</span>' : ''}</div>
+      <div><div class="tl">TIER ${p.tier} · ${p.team}</div><b>${p.first} ${p.last}</b><div class="sb">${p.opp} · ${p.game.time}</div></div>${p.out ? '<span class="out-b">OUT</span>' : ''}<span class="tb">${logo(p.team)}</span></div>
     <div class="pop-b"><div class="sec-label" style="margin-bottom:5px">How the projection adds up</div>
       ${rows.map((r, i) => `<div class="br ${r.fp < 0 ? 'neg' : ''}"><span class="k">${r.k}</span><span class="v num">${r.v.toFixed(1)} × ${r.m}</span><span class="bw"><i style="width:${(Math.abs(r.fp) / mx * 100).toFixed(0)}%; animation-delay:${i * 60}ms"></i></span><span class="f num">${r.fp < 0 ? '−' : '+'}${Math.abs(r.fp).toFixed(2)}</span></div>`).join('')}
       <div class="br tot"><span>Projected fantasy points</span><b class="num" id="popTot">0.00</b></div>
@@ -921,7 +926,7 @@ const statLine = p => p.out ? 'Out · did not play' : [[p.pts,'PTS'],[p.reb,'REB
 const rkLabel = e => (e.tied ? 'T' : '') + e.rank;
 function renderGames() {
   $('games').innerHTML = games.map(g => { const c = clock(g); return `<div class="game"><div class="st ${c.cls}">${c.cls ? '' : '<span class="dot"></span>'}${c.txt}</div>` +
-    [g.away, g.home].map(t => `<div class="tm"><span><i class="sw" style="background:${TEAM_COLOR[t]}"></i>${t}</span><span class="num">${g.t < 0 ? '' : g.score[t]}</span></div>`).join('') + '</div>'; }).join('');
+    [g.away, g.home].map(t => `<div class="tm"><span>${logo(t, 1)}${t}</span><span class="num">${g.t < 0 ? '' : g.score[t]}</span></div>`).join('') + '</div>'; }).join('');
 }
 function renderBoard(instant) {
   const sorted = rank(), lb = $('lb');
@@ -968,7 +973,7 @@ function renderYou() {
     const c = $('pc' + p.id), g = clock(p.game);
     [...c.children].forEach(ch => { if (!ch.classList.contains('fly')) ch.remove(); });
     c.insertAdjacentHTML('afterbegin', `<div class="t"><span>Tier ${p.tier}</span><span class="gs ${g.cls || p.out ? 'off' : ''}">${p.out ? 'OUT' : g.cls === 'pre' ? p.game.time : g.cls ? 'Final' : '● ' + g.txt.split(' ')[0]}</span></div>
-      <div class="pr">${pav(p)}<div class="pi"><div class="n">${p.first[0]}. ${p.short}</div><div class="s">${p.team} · ${p.out ? 'Out tonight' : p.game.t < 0 ? 'Not started' : `${p.pts} PTS · ${p.reb} REB · ${p.ast} AST`}</div></div></div><div class="f num">${fmt(p.fp)}</div>`);
+      <div class="pr">${pav(p)}<div class="pi"><div class="n">${p.first[0]}. ${p.short}</div><div class="s">${logo(p.team)}${p.team} · ${p.out ? 'Out tonight' : p.game.t < 0 ? 'Not started' : `${p.pts} PTS · ${p.reb} REB · ${p.ast} AST`}</div></div></div><div class="f num">${fmt(p.fp)}</div>`);
   });
   const h = rankHist.slice(-140), n = entries.length;
   $('spark').innerHTML = h.length > 1 ? `<polyline fill="none" stroke="#14E0C8" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="${h.map((r, i) => `${(i / (h.length - 1) * 172 + 4).toFixed(1)},${((r - 1) / (n - 1) * 34 + 5).toFixed(1)}`).join(' ')}"/>
