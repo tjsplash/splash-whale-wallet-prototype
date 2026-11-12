@@ -247,6 +247,107 @@
   @keyframes gBounce { from{transform:translateY(-12px)} to{transform:translateY(8px) scale(1.08,.92)} }
   @keyframes gShake { from{transform:translateX(-5px) rotate(-4deg)} to{transform:translateX(5px) rotate(4deg)} }
   .fi.chat .tx.hasgif, .fi.chat.self .tx.hasgif { background:none; padding:0; border-radius:12px; }
+
+  /* DEVICE TOGGLE + PHONE FRAME */
+  .dev { display:flex; background:#1b1c21; border-radius:10px; padding:3px; flex:none; }
+  .dev button { border:0; background:none; color:#9aa0ab; font-weight:700; font-size:12px; padding:6px 10px; border-radius:8px; }
+  .dev button.on { background:var(--teal); color:var(--black); }
+  body.embed .dev, body.embed .note { display:none; }
+  #phoneWrap { display:none; }
+  body.phone-mode { background:#e5e7eb; }
+  body.phone-mode > .hero, body.phone-mode > main, body.phone-mode > .note, body.phone-mode > .mview, body.phone-mode .steps, body.phone-mode .wallet-pill, body.phone-mode .mbar, body.phone-mode .ticker { display:none !important; }
+  body.phone-mode .dev { margin-left:auto; }
+  body.phone-mode #phoneWrap { display:flex; flex-direction:column; align-items:center; padding:84px 16px 24px; gap:12px; }
+  .phone { width:414px; max-width:100%; height:min(868px, calc(100vh - 136px)); min-height:520px; background:#0a0a0c; border-radius:46px; padding:12px; box-shadow:0 30px 60px rgba(0,0,0,.25); }
+  .phone iframe { width:100%; height:100%; border:0; border-radius:34px; background:var(--bg); display:block; }
+
+  /* STAGE 0: TIERS PENDING */
+  .st-soon .wrap { display:block; }
+  body:not(.st-soon) #secSoon, .st-soon #secStand, .st-soon #huddle { display:none; }
+  .soon-grid { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:20px; align-items:stretch; }
+  .soon-cd { background:var(--black); color:#fff; border-color:#2a2c33; padding:26px 24px; display:flex; flex-direction:column; overflow:hidden; }
+  .soon-cd .sec-label { color:#8a8f99; }
+  .cd { display:flex; gap:8px; align-items:flex-start; margin:12px 0 16px; }
+  .cd div { background:#17181c; border:1px solid #2a2c33; border-radius:14px; padding:12px 0 9px; width:86px; text-align:center; }
+  .cd b { display:block; font-size:42px; font-weight:900; letter-spacing:-1.5px; line-height:1; } .cd span { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#8a8f99; }
+  .cd em { font-style:normal; font-size:34px; font-weight:900; color:#3a3d46; padding-top:10px; }
+  .cd b.tk { animation:tk .35s; } @keyframes tk { from{transform:translateY(-6px); opacity:.3} }
+  .soon-cd h2 { margin:0 0 6px; font-size:20px; font-weight:800; letter-spacing:-.5px; }
+  .soon-cd p { margin:0 0 16px; color:#b6bbc5; line-height:1.5; }
+  .soon-cd .acts { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn.ghost { background:#1b1c21; color:#fff; border:1px solid #2a2c33; } .btn.ghost:hover { background:#2a2c33; }
+  .btn.pri.set { background:var(--teal-soft); color:var(--teal-ink); }
+  .pool { margin:22px -24px 0; padding-top:16px; border-top:1px solid #2a2c33; }
+  .pool .sec-label { padding:0 24px; }
+  .pool-w { overflow:hidden; margin-top:12px; -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent); mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent); }
+  .pool-t { display:flex; gap:12px; width:max-content; animation:marq 46s linear infinite; }
+  @keyframes marq { to { transform:translateX(-50%); } }
+  .pool-p { text-align:center; font-size:10px; font-weight:600; color:#b6bbc5; width:56px; position:relative; }
+  .pool-p .pav { width:52px; height:52px; margin:0 auto 5px; }
+  .pool-p u { position:absolute; top:-2px; right:-2px; width:18px; height:18px; border-radius:50%; background:var(--teal); color:var(--black); font-weight:900; font-size:11px; text-decoration:none; display:flex; align-items:center; justify-content:center; z-index:1; }
+  .how { padding:20px 22px; display:flex; flex-direction:column; }
+  .how-h { display:flex; align-items:baseline; gap:10px; margin-bottom:12px; } .how-h h2 { margin:0; font-size:20px; font-weight:800; letter-spacing:-.5px; flex:1; }
+  .scene { height:252px; background:var(--bg); border-radius:14px; padding:14px 16px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; gap:8px; animation:slide .35s ease-out; }
+  .how-d { margin:12px 2px 14px; color:var(--ink-2); line-height:1.5; min-height:42px; }
+  .how-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:auto; }
+  .how-steps button { border:0; background:none; text-align:left; padding:0; font-size:12px; font-weight:600; color:var(--ink-3); }
+  .how-steps i { display:block; height:4px; border-radius:99px; background:#e5e7eb; margin-bottom:7px; overflow:hidden; position:relative; }
+  .how-steps i::after { content:''; position:absolute; inset:0; background:var(--teal-2); transform:scaleX(0); transform-origin:left; }
+  .how-steps .done i::after { transform:none; } .how-steps .on i::after { animation:fill 4.6s linear forwards; } @keyframes fill { to { transform:none; } }
+  .how-steps .on { color:var(--ink); } .how-steps b { margin-right:5px; }
+  .hw-tier { display:flex; align-items:center; gap:10px; background:#fff; border-radius:10px; padding:6px 10px; }
+  .hw-tier .tl { font-size:10px; font-weight:800; letter-spacing:.6px; color:var(--ink-3); width:42px; }
+  .hw-p { display:flex; align-items:center; gap:6px; flex:1; min-width:0; font-size:11px; font-weight:600; animation:hwDim .4s var(--d) forwards; }
+  .hw-p small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:11px; } .hw-p .pav { width:34px; height:34px; }
+  .hw-p.ch { animation:hwPick .45s var(--d) forwards; } .hw-p.ch .pav { animation:hwRing .45s var(--d) forwards; }
+  @keyframes hwDim { to { opacity:.32; } } @keyframes hwPick { 50% { transform:scale(1.12); } to { color:var(--teal-ink); font-weight:800; } } @keyframes hwRing { to { box-shadow:0 0 0 3px var(--teal); } }
+  .hw-live { display:flex; align-items:center; gap:14px; } .hw-live .pav { width:72px; height:72px; }
+  .hw-fp { font-size:40px; font-weight:900; letter-spacing:-1.5px; line-height:1.05; } .hw-fp.pop { animation:pop .35s; }
+  .hw-live small, .hw-win small { color:var(--ink-3); font-weight:600; font-size:12px; }
+  .hw-evs { display:flex; flex-wrap:wrap; gap:6px; min-height:64px; align-content:flex-start; }
+  .hw-evs span { background:#fff; border-radius:999px; padding:5px 10px; font-size:12px; font-weight:600; animation:slide .3s; } .hw-evs b { color:var(--teal-ink); margin-left:5px; }
+  .hw-lb { position:relative; height:196px; }
+  .hw-row { position:absolute; left:0; right:0; height:42px; background:#fff; border-radius:10px; display:flex; align-items:center; gap:10px; padding:0 12px; font-weight:600; transition:top .55s cubic-bezier(.2,.8,.2,1), box-shadow .3s; }
+  .hw-row.me { background:var(--teal-soft); box-shadow:inset 3px 0 0 var(--teal); font-weight:800; } .hw-row .rk { width:22px; color:var(--ink-3); font-weight:800; } .hw-row .sc { margin-left:auto; font-weight:800; }
+  .hw-row .up { color:var(--up); font-size:11px; font-weight:800; }
+  .hw-win { text-align:center; } .hw-crown { font-size:64px; line-height:1; animation:gPulse .8s ease-in-out infinite alternate; } .hw-win b { display:block; font-size:26px; font-weight:900; letter-spacing:-.8px; margin:8px 0 4px; }
+  .hw-win i { position:absolute; top:-12px; width:8px; height:12px; border-radius:2px; animation:fall 2.4s linear infinite; } @keyframes fall { to { transform:translateY(290px) rotate(540deg); } }
+  .scoring { margin-top:20px; padding:16px 20px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .scoring .sec-label { margin-right:6px; }
+
+  /* PLAYER PREVIEW (hover on desktop, bottom sheet on mobile) */
+  .hot { font-size:10px; font-weight:800; color:#c2410c; background:#fff7ed; border-radius:999px; padding:2px 7px; margin-left:auto; letter-spacing:0; }
+  .deal .pk { animation:deal .45s cubic-bezier(.2,.8,.2,1) backwards; animation-delay:calc(var(--i) * 45ms); } @keyframes deal { from { opacity:0; transform:translateY(18px) scale(.94); } }
+  .pop { position:fixed; z-index:80; width:320px; background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.2); opacity:0; pointer-events:none; transform:translateY(6px) scale(.98); transition:opacity .15s, transform .15s; overflow:hidden; }
+  .pop.on { opacity:1; transform:none; }
+  .pop.sheet { left:0; right:0; bottom:0; top:auto; width:auto; border-radius:22px 22px 0 0; border:0; transform:translateY(100%); opacity:1; transition:transform .28s cubic-bezier(.2,.8,.2,1); max-height:92vh; overflow-y:auto; }
+  .pop.sheet.on { transform:none; pointer-events:auto; }
+  .pop-bg { position:fixed; inset:0; background:rgba(10,10,12,.5); z-index:79; opacity:0; pointer-events:none; transition:opacity .2s; } .pop-bg.on { opacity:1; pointer-events:auto; }
+  .pop-h { display:flex; align-items:flex-end; gap:12px; color:#fff; padding:12px 14px 0; height:92px; position:relative; }
+  .pop-h img { height:88px; width:auto; align-self:flex-end; display:block; filter:drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
+  .pop-h > div { padding-bottom:12px; min-width:0; } .pop-h b { font-size:17px; font-weight:800; letter-spacing:-.3px; display:block; }
+  .pop-h .tl { font-size:10px; font-weight:800; letter-spacing:1px; opacity:.8; } .pop-h .sb { font-size:12px; opacity:.85; margin-top:1px; }
+  .pop-h .out-b { position:absolute; top:10px; right:10px; }
+  .pop-b { padding:12px 14px 14px; }
+  .br { display:grid; grid-template-columns:34px 68px 1fr 50px; gap:8px; align-items:center; font-size:12px; padding:2.5px 0; }
+  .br .k { font-weight:800; font-size:11px; } .br .v { color:var(--ink-3); } .br .f { text-align:right; font-weight:700; }
+  .br .bw { height:7px; background:var(--bg); border-radius:99px; overflow:hidden; } .br .bw i { display:block; height:100%; border-radius:99px; background:var(--teal-2); transform-origin:left; animation:grow .45s cubic-bezier(.2,.8,.2,1) backwards; }
+  @keyframes grow { from { transform:scaleX(0); } }
+  .br.neg .bw i { background:#fca5a5; } .br.neg .f { color:var(--down); }
+  .br.tot { display:flex; justify-content:space-between; align-items:baseline; border-top:1px solid var(--line); margin-top:7px; padding-top:8px; font-weight:700; } .br.tot b { font-size:24px; font-weight:900; letter-spacing:-.8px; }
+  .pop-out { background:#fee2e2; color:var(--down); font-weight:700; font-size:12px; border-radius:8px; padding:7px 10px; margin-top:8px; }
+  .pop .rs { text-transform:none; letter-spacing:0; font-weight:600; margin-left:6px; }
+  .rg { display:flex; gap:8px; align-items:flex-end; position:relative; margin-top:8px; }
+  .rg .g { flex:1; text-align:center; } .rg .g small { display:block; font-size:10px; color:var(--ink-3); height:14px; line-height:14px; white-space:nowrap; }
+  .rg .gb { height:82px; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; font-size:11px; font-weight:700; }
+  .rg .gb i { display:block; width:100%; max-width:34px; border-radius:5px 5px 0 0; background:#d1d5db; transform-origin:bottom; animation:growY .5s cubic-bezier(.2,.8,.2,1) backwards; } .rg .gb i.hi { background:var(--teal-2); }
+  @keyframes growY { from { transform:scaleY(0); } }
+  .rg .pl { position:absolute; left:0; right:0; border-top:1.5px dashed var(--ink-3); pointer-events:none; } .rg .pl span { position:absolute; left:0; top:-12px; font-size:9px; font-weight:800; letter-spacing:.6px; color:var(--ink-3); background:#fff; padding-right:3px; line-height:1; }
+  .pop-tip { margin-top:10px; font-size:11px; font-weight:700; color:var(--teal-ink); background:var(--teal-soft); border-radius:8px; padding:6px 10px; text-align:center; }
+  .pop-acts { display:flex; gap:8px; margin-top:14px; } .pop-acts .btn.pri { flex:1; }
+  .flyer { position:fixed; z-index:90; pointer-events:none; margin:0; }
+  #btnLock.ready, #mLock.ready { animation:ready 1.2s ease-in-out infinite; } @keyframes ready { 50% { box-shadow:0 0 0 6px rgba(20,224,200,.28); } }
+  .mbar, .mview, .ticker { display:none; }
   .note { max-width:1240px; margin:-40px auto 40px; padding:0 24px; font-size:12px; color:var(--ink-3); line-height:1.5; }
   @media (max-width:1100px) { .note { margin-top:16px; } }
 
@@ -259,6 +360,36 @@
     .lb-cols, .row-main { grid-template-columns:30px 28px minmax(0,1fr) 64px 48px; gap:6px; }
     .boxes { margin-left:0; }
   }
+  @media (max-width: 980px) { .soon-grid { grid-template-columns:1fr; } }
+  @media (max-width: 600px) {
+    .nav { padding:0 12px; gap:8px; } .logo-img { height:18px; } .steps button { padding:8px 6px; }
+    .hero { padding:76px 14px 14px; } .hero h1 { font-size:20px; } .hero .meta { font-size:12px; }
+    .boxes { width:100%; } .box { flex:1; padding:6px 8px; }
+    .controls { width:100%; justify-content:space-between; } .controls .lbl { display:none; }
+    .games { flex-wrap:nowrap; overflow-x:auto; margin:14px -14px 0; padding:0 14px; scrollbar-width:none; } .game { flex:none; }
+    .wrap { padding:12px 12px 40px; gap:12px; } .st-picks .wrap { padding-bottom:110px; }
+    .tier { padding:12px; } .pk-grid { grid-template-columns:1fr 1fr; gap:8px; } .pk { padding:9px; } .pk .pav { width:38px; height:38px; } .pk .n { font-size:12px; }
+    .st-picks #tray { display:none; }
+    .st-picks .mbar { display:flex; }
+    .mbar { position:fixed; left:0; right:0; bottom:0; z-index:40; background:#fff; border-top:1px solid var(--line); padding:10px 12px 14px; align-items:center; gap:10px; box-shadow:0 -8px 24px rgba(0,0,0,.08); }
+    .mbar .ms { display:flex; gap:5px; } .mslot { width:40px; height:40px; border-radius:50%; } .mslot .pav { width:40px; height:40px; }
+    .mslot.empty { border:1.5px dashed #cbd0d8; color:var(--ink-3); font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .mbar .mt { flex:1; min-width:0; line-height:1.15; } .mbar .mt small { display:block; font-size:10px; font-weight:700; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .mbar .mt small.bad { color:var(--down); }
+    .mbar .mt b { font-size:19px; font-weight:900; letter-spacing:-.5px; } .mbar .btn { padding:11px 14px; white-space:nowrap; }
+    .you { grid-template-columns:1fr; gap:12px; padding:14px; } .you .rank { font-size:34px; } .lineup { grid-template-columns:1fr 1fr; }
+    .precard { padding:20px 16px; } .precard .big { font-size:38px; }
+    .st-pre .mview, .st-live .mview { display:flex; position:sticky; top:64px; z-index:30; margin:10px 12px 0; }
+    .mview button { flex:1; padding:8px; font-size:13px; }
+    body:not(.mv-huddle) #huddle, .mv-huddle #secStand { display:none; }
+    .feed { height:calc(100vh - 150px); min-height:0; }
+    .st-live:not(.mv-huddle) .ticker.on { display:flex; }
+    .ticker { position:fixed; left:10px; right:10px; bottom:10px; z-index:45; background:var(--black); color:#fff; border-radius:14px; padding:9px 12px; gap:10px; align-items:center; font-size:13px; box-shadow:0 10px 30px rgba(0,0,0,.3); animation:tkin .3s cubic-bezier(.2,.8,.2,1); cursor:pointer; }
+    .ticker .pav { width:36px; height:36px; } .ticker small { display:block; color:var(--teal); font-weight:800; font-size:11px; margin-top:1px; }
+    @keyframes tkin { from { transform:translateY(70px); opacity:0; } }
+    .cd div { width:auto; flex:1; } .cd b { font-size:34px; } .soon-cd { padding:20px 16px; } .pool { margin:20px -16px 0; }
+    .how { padding:16px; } .scene { height:236px; padding:12px; } .how-steps span { display:none; } .hw-p small { display:none; } .hw-p { justify-content:center; }
+    .note { padding:0 14px; }
+  }
 </style>
 </head>
 <body class="st-picks">
@@ -266,10 +397,12 @@
 <header class="nav">
   <a href="#" class="logo" aria-label="Splash Sports home"><img src="assets/splash-logo-white.svg" alt="splash sports" class="logo-img" /></a>
   <nav class="steps" id="steps">
-    <button data-st="picks"><i>1</i><span>Make picks</span></button>
-    <button data-st="pre"><i>2</i><span>Before tip-off</span></button>
-    <button data-st="live"><i>3</i><span>Live</span></button>
+    <button data-st="soon"><i>1</i><span>Tiers pending</span></button>
+    <button data-st="picks"><i>2</i><span>Make picks</span></button>
+    <button data-st="pre"><i>3</i><span>Before tip-off</span></button>
+    <button data-st="live"><i>4</i><span>Live</span></button>
   </nav>
+  <div class="dev" id="dev" role="group" aria-label="Preview size"><button class="on" data-d="desk">Desktop</button><button data-d="phone">Mobile</button></div>
   <div class="wallet-pill"><div class="av">TJ</div>$412.50</div>
 </header>
 
@@ -298,8 +431,29 @@
   </div>
 </section>
 
+<div class="mview seg" id="mview"><button class="on" data-v="stand">Standings</button><button data-v="huddle">Huddle</button></div>
 <main class="wrap">
   <div>
+    <!-- STAGE 0: TIERS NOT SET YET -->
+    <section id="secSoon">
+      <div class="soon-grid">
+        <div class="panel soon-cd">
+          <div class="sec-label">Tiers drop in</div>
+          <div class="cd" id="cd"></div>
+          <h2>Tonight's tiers are being set</h2>
+          <p>We sort tonight's players into 4 tiers the night before tip-off. Tiers are announced at 9:00 PM ET, then you pick one player from each.</p>
+          <div class="acts"><button class="btn pri" id="btnNotify">🔔 Notify me when tiers drop</button><button class="btn ghost" id="btnReveal">Demo: reveal tiers now →</button></div>
+          <div class="pool"><div class="sec-label">In tonight's player pool · tiers to be announced</div><div class="pool-w"><div class="pool-t" id="poolT"></div></div></div>
+        </div>
+        <div class="panel how">
+          <div class="how-h"><h2>How Tiers works</h2><span class="sec-label">20-second demo</span></div>
+          <div id="howStage"></div>
+          <div class="how-steps" id="howSteps"></div>
+        </div>
+      </div>
+      <div class="panel scoring"><span class="sec-label">Scoring</span><span class="fact">Point +1</span><span class="fact">Made three +0.5</span><span class="fact">Rebound +1.25</span><span class="fact">Assist +1.5</span><span class="fact">Steal +2</span><span class="fact">Block +2</span><span class="fact">Turnover −0.5</span><span class="fact">Double-double +1.5</span><span class="fact">Triple-double +3</span></div>
+    </section>
+
     <!-- STAGE 1: PICKS -->
     <section id="secPicks">
       <div class="pk-bar">
@@ -377,7 +531,13 @@
   </aside>
 </main>
 
-<p class="note">Prototype with simulated play-by-play. Real, from the Monday Tiers contest on 11/9: the format, entry fee, resized $72 prize, scoring, the eight entrants, the five games, splash-tj's lineup, Reaves being OUT, and the opponents' picks that had been revealed at tip-off (Mobley, Kessler, Alexander-Walker). Made up: which tier most players sit in, every projection except splash-tj's four picks, opponents' still-hidden picks, all stats, and all chat messages. Player headshots are from ESPN. GIFs are animated stand-ins until a GIPHY API key is connected in the GIF picker; the key is saved only in this browser. Scoring: PTS 1 · 3PM +0.5 · REB 1.25 · AST 1.5 · STL 2 · BLK 2 · TO −0.5 · double-double +1.5 · triple-double +3.</p>
+<div class="mbar" id="mbar"></div>
+<div class="pop-bg" id="popBg"></div>
+<div class="pop" id="pop" role="dialog" aria-label="Player preview"></div>
+<div class="ticker" id="ticker"></div>
+<div id="phoneWrap"><div class="phone"><iframe id="phoneFrame" title="Mobile preview"></iframe></div><div class="sec-label">Mobile preview · 390 px wide · tap and scroll inside the phone</div></div>
+
+<p class="note">Prototype with simulated play-by-play. Real, from the Monday Tiers contest on 11/9: the format, entry fee, resized $72 prize, scoring, the eight entrants, the five games, splash-tj's lineup, Reaves being OUT, and the opponents' picks that had been revealed at tip-off (Mobley, Kessler, Alexander-Walker). Made up: which tier most players sit in, every projection except splash-tj's four picks, opponents' still-hidden picks, all stats, and all chat messages. Each player's projected stat line and last-5 games in the pick preview, and the 9:00 PM tiers countdown, are also made up. Player headshots are from ESPN. GIFs are animated stand-ins until a GIPHY API key is connected in the GIF picker; the key is saved only in this browser. Scoring: PTS 1 · 3PM +0.5 · REB 1.25 · AST 1.5 · STL 2 · BLK 2 · TO −0.5 · double-double +1.5 · triple-double +3.</p>
 
 <script>
 /* ================= DATA ================= */
@@ -463,11 +623,11 @@ function renderPicks() {
     return `<div class="panel tier ${chosen ? 'done' : ''} ${nextTier === t - 1 ? 'next' : ''}" id="tier${t}">
       <div class="tier-h"><div class="tier-n">${chosen ? '✓' : 'T' + t}</div><div class="tt">Tier ${t}</div>
         <div class="ts">${chosen ? chosen.first + ' ' + chosen.last + ' · tap another to swap' : 'Pick 1 of ' + pool.length}</div></div>
-      <div class="pk-grid">${pool.map(p => `<button class="pk ${chosen === p ? 'sel' : ''} ${p.out ? 'out' : ''}" data-id="${p.id}">
+      <div class="pk-grid">${pool.map((p, j) => `<button class="pk ${chosen === p ? 'sel' : ''} ${p.out ? 'out' : ''}" data-id="${p.id}" style="--i:${(t - 1) * 3 + j}">
         <span class="ck">✓</span>
         <div class="pk-top">${pav(p)}
           <div><div class="n">${p.first[0]}. ${p.last}${p.out ? '<span class="out-b">OUT</span>' : ''}</div><div class="s">${p.opp} · ${p.game.time}</div></div></div>
-        <div class="pk-proj"><b class="num">${p.proj.toFixed(2)}</b><span>PROJ</span></div>
+        <div class="pk-proj"><b class="num">${p.proj.toFixed(2)}</b><span>PROJ</span>${!p.out && recent(p).reduce((s, g) => s + g.fp, 0) / 5 > p.proj * 1.04 ? '<em class="hot" style="font-style:normal">🔥 Hot</em>' : ''}</div>
         <div class="bar"><i style="width:${(p.proj / max * 100).toFixed(0)}%"></i></div></button>`).join('')}</div></div>`;
   }).join('');
   renderTray();
@@ -495,16 +655,85 @@ function renderTray() {
     const ps = chosen.filter(p => p && p.game.slot === s);
     return `<div>${tm}<b>${ps.length ? ps.map(p => p.short).join(', ') : '—'}</b></div>`;
   }).join('');
-  $('btnLock').disabled = !(n === 4 && teams.size >= 2);
+  const ready = n === 4 && teams.size >= 2;
+  $('btnLock').disabled = !ready; $('btnLock').classList.toggle('ready', ready);
+  const warn = outP ? outP.short + ' is OUT' : !teamOk ? 'Need players from 2+ teams' : '';
+  $('mbar').innerHTML = `<div class="ms">${chosen.map((p, i) => p ? `<div class="mslot" data-t="${i}">${pav(p)}</div>` : `<div class="mslot empty" data-t="${i}">T${i + 1}</div>`).join('')}</div>
+    <div class="mt"><small class="${warn ? 'bad' : ''}">${warn || 'Projected'}</small><b class="num">${tot.toFixed(2)}</b></div>
+    <button class="btn pri ${ready ? 'ready' : ''}" id="mLock" ${ready ? '' : 'disabled'}>${ready ? 'Lock in →' : n + ' of 4'}</button>`;
+}
+/* projected stat line that adds up to the projection (invented from the player's archetype) */
+function statProj(p) {
+  const w = ARCH[p.arch], n = p.proj / w.reduce((s, x, i) => s + x * EVENTS[i].fp, 0), c = w.map(x => x * n);
+  const rows = [['PTS', 2 * c[0] + 3 * c[1] + c[2], 1], ['3PM', c[1], .5], ['REB', c[3], 1.25], ['AST', c[4], 1.5], ['STL', c[5], 2], ['BLK', c[6], 2], ['TO', c[7], -.5]]
+    .map(([k, v, m]) => ({ k, v, m, fp: +(v * m).toFixed(2) }));
+  rows[0].fp += +(p.proj - rows.reduce((s, r) => s + r.fp, 0)).toFixed(2); // keep the rounded rows summing to the total
+  return rows;
+}
+function recent(p) { // invented last-5 game log, stable per player
+  const r = mulberry(p.id * 7919 + 101), opps = Object.keys(TEAM_COLOR).filter(t => t !== p.team);
+  return ['10/30', '11/1', '11/3', '11/5', '11/7'].map(d => ({ d, opp: (r() < .5 ? 'vs ' : '@ ') + opps[Math.floor(r() * opps.length)], fp: +(p.proj * (.7 + r() * .62)).toFixed(1) }));
+}
+const touchMode = () => document.body.classList.contains('embed') || innerWidth <= 600 || matchMedia('(hover: none)').matches;
+const popTip = p => { const cur = sel[p.tier - 1]; return cur === p.id ? 'In your lineup · click to remove' : 'Click to ' + (cur !== null ? 'swap in for ' + players[cur].short : 'add to your lineup'); };
+function popHTML(p, sheet) {
+  const rows = statProj(p), mx = Math.max(...rows.map(r => Math.abs(r.fp))), rec = recent(p), rmx = Math.max(p.proj, ...rec.map(g => g.fp)) * 1.06;
+  const beat = rec.filter(g => g.fp >= p.proj).length, avg = rec.reduce((s, g) => s + g.fp, 0) / 5, cur = sel[p.tier - 1];
+  return `<div class="pop-h" style="background:${TEAM_COLOR[p.team]}"><img src="${p.img}" alt="" onerror="this.remove()">
+      <div><div class="tl">TIER ${p.tier} · ${p.team}</div><b>${p.first} ${p.last}</b><div class="sb">${p.opp} · ${p.game.time}</div></div>${p.out ? '<span class="out-b">OUT</span>' : ''}</div>
+    <div class="pop-b"><div class="sec-label" style="margin-bottom:5px">How the projection adds up</div>
+      ${rows.map((r, i) => `<div class="br ${r.fp < 0 ? 'neg' : ''}"><span class="k">${r.k}</span><span class="v num">${r.v.toFixed(1)} × ${r.m}</span><span class="bw"><i style="width:${(Math.abs(r.fp) / mx * 100).toFixed(0)}%; animation-delay:${i * 60}ms"></i></span><span class="f num">${r.fp < 0 ? '−' : '+'}${Math.abs(r.fp).toFixed(2)}</span></div>`).join('')}
+      <div class="br tot"><span>Projected fantasy points</span><b class="num" id="popTot">0.00</b></div>
+      ${p.out ? '<div class="pop-out">Ruled OUT tonight. He scores 0 if you keep him.</div>' : ''}
+      <div class="sec-label" style="margin-top:12px">Last 5 games<span class="rs">avg ${avg.toFixed(1)} · beat tonight's projection ${beat} of 5</span></div>
+      <div class="rg"><div class="pl" style="bottom:${(14 + p.proj / rmx * 64).toFixed(0)}px"><span>PROJ</span></div>
+        ${rec.map((g, i) => `<div class="g"><div class="gb"><span class="num">${g.fp.toFixed(1)}</span><i class="${g.fp >= p.proj ? 'hi' : ''}" style="height:${(g.fp / rmx * 64).toFixed(0)}px; animation-delay:${200 + i * 70}ms"></i></div><small>${g.opp}</small></div>`).join('')}</div>
+      ${sheet ? `<div class="pop-acts"><button class="btn pri" data-pick="${p.id}">${cur === p.id ? 'Remove from lineup' : cur !== null ? 'Swap in for ' + players[cur].short : 'Add to lineup'}</button><button class="btn sec" data-close="1">Close</button></div>`
+        : `<div class="pop-tip">${popTip(p)}</div>`}</div>`;
+}
+let popId = null, popRAF, popT;
+function showPop(id, el, sheet) {
+  const p = players[id], pop = $('pop'); popId = id;
+  pop.className = 'pop' + (sheet ? ' sheet' : ''); pop.innerHTML = popHTML(p, sheet);
+  if (sheet) { pop.style.left = pop.style.top = ''; $('popBg').classList.add('on'); }
+  else { const r = el.getBoundingClientRect(), w = 320, h = pop.offsetHeight;
+    pop.style.left = (r.right + 10 + w < innerWidth ? r.right + 10 : Math.max(8, r.left - w - 10)) + 'px';
+    pop.style.top = Math.max(74, Math.min(r.top - 30, innerHeight - h - 10)) + 'px'; }
+  pop.offsetHeight; pop.classList.add('on');
+  const t0 = performance.now(), out = $('popTot'); cancelAnimationFrame(popRAF); clearTimeout(popT);
+  const f = t => { const k = Math.min(1, (t - t0) / 600); out.textContent = (p.proj * (1 - Math.pow(1 - k, 3))).toFixed(2); if (k < 1) popRAF = requestAnimationFrame(f); };
+  popRAF = requestAnimationFrame(f); popT = setTimeout(() => { out.textContent = p.proj.toFixed(2); }, 700);
+}
+function hidePop() { popId = null; $('pop').classList.remove('on'); $('popBg').classList.remove('on'); }
+function flyTo(from, i, p) { // headshot flies from the card into its lineup slot
+  const tgt = [...document.querySelectorAll(`.slot[data-t="${i}"] .pav, .mslot[data-t="${i}"] .pav`)].find(x => x.offsetParent);
+  if (!from || !tgt || !tgt.animate) return;
+  const to = tgt.getBoundingClientRect(), f = document.createElement('div');
+  f.innerHTML = pav(p); const a = f.firstChild; a.classList.add('flyer'); a.style.left = from.left + 'px'; a.style.top = from.top + 'px'; a.style.width = from.width + 'px'; a.style.height = from.height + 'px';
+  document.body.appendChild(a); tgt.style.visibility = 'hidden';
+  a.animate([{ transform:'none' }, { transform:`translate(${to.left - from.left}px, ${to.top - from.top}px) scale(${to.width / from.width})` }], { duration:480, easing:'cubic-bezier(.3,.1,.2,1)' })
+    .onfinish = () => { a.remove(); tgt.style.visibility = ''; tgt.animate([{ transform:'scale(1.25)' }, { transform:'none' }], { duration:260 }); };
+  a.style.transformOrigin = '0 0';
 }
 function choose(id) {
-  const p = players[id], i = p.tier - 1;
+  const p = players[id], i = p.tier - 1, src = document.querySelector(`.pk[data-id="${id}"] .pav`);
+  const from = src && src.getBoundingClientRect();
   sel[i] = sel[i] === id ? null : id;
   renderPicks();
+  if (sel[i] !== null) flyTo(from, i, p);
+  const tip = $('pop').querySelector('.pop-tip'); if (tip && popId === id) tip.textContent = popTip(p);
   const next = sel.indexOf(null);
   if (sel[i] !== null && next !== -1) setTimeout(() => $('tier' + (next + 1)).scrollIntoView({ behavior:'smooth', block:'center' }), 250);
 }
-$('tiers').onclick = ev => { const b = ev.target.closest('.pk'); if (b) choose(+b.dataset.id); };
+$('tiers').onclick = ev => { const b = ev.target.closest('.pk'); if (!b) return; if (touchMode()) showPop(+b.dataset.id, b, true); else choose(+b.dataset.id); };
+$('tiers').onmouseover = ev => { if (touchMode()) return; const b = ev.target.closest('.pk'); if (!b) hidePop(); else if (+b.dataset.id !== popId) showPop(+b.dataset.id, b); };
+$('tiers').onmouseleave = () => { if (!touchMode()) hidePop(); };
+$('tiers').addEventListener('focusin', ev => { const b = ev.target.closest('.pk'); if (b && !touchMode() && b.matches(':focus-visible') && +b.dataset.id !== popId) showPop(+b.dataset.id, b); });
+$('tiers').addEventListener('focusout', () => { if (!touchMode()) hidePop(); });
+addEventListener('scroll', () => { if (popId !== null && !$('pop').classList.contains('sheet')) hidePop(); }, { passive:true });
+$('pop').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; const id = b.dataset.pick; hidePop(); if (id !== undefined) choose(+id); };
+$('popBg').onclick = hidePop;
+$('mbar').onclick = ev => { if (ev.target.closest('#mLock')) { setStage('pre'); return; } const m = ev.target.closest('.mslot'); if (m) $('tier' + (+m.dataset.t + 1)).scrollIntoView({ behavior:'smooth', block:'center' }); };
 $('slots').onclick = ev => {
   const x = ev.target.closest('[data-x]'); if (x) { sel[+x.dataset.x] = null; renderPicks(); return; }
   const s = ev.target.closest('.slot'); if (s) $('tier' + (+s.dataset.t + 1)).scrollIntoView({ behavior:'smooth', block:'center' });
@@ -518,14 +747,17 @@ $('btnLock').onclick = () => setStage('pre');
 
 /* ================= STAGES ================= */
 function setStage(s) {
-  if (s !== 'picks' && sel.some(x => x === null)) sel = REAL_PICKS.map(l => byLast(l).id);
+  if (s !== 'picks' && s !== 'soon' && sel.some(x => x === null)) sel = REAL_PICKS.map(l => byLast(l).id);
   const from = stage;
-  stage = s; document.body.className = 'st-' + s;
+  stage = s; document.body.classList.remove('st-soon', 'st-picks', 'st-pre', 'st-live'); document.body.classList.add('st-' + s);
+  hidePop(); clearInterval(cdTimer); howT.forEach(clearTimeout); $('ticker').classList.remove('on');
+  if (s === 'soon' || s === 'picks') setMview('stand');
   [...$('steps').children].forEach(b => b.classList.toggle('on', b.dataset.st === s));
   window.scrollTo(0, 0);
   const badge = $('liveBadge');
+  if (s === 'soon') { clearTimeout(timer); clearInterval(preTimer); resetSim(); badge.className = 'live-badge quiet'; badge.textContent = 'TIERS PENDING'; renderGames(); startSoon(); return; }
   if (s === 'picks') { clearTimeout(timer); clearInterval(preTimer); resetSim(); badge.className = 'live-badge quiet'; badge.textContent = 'PICKS OPEN'; renderGames(); renderPicks(); return; }
-  if (s === 'pre' || from === 'picks') startBoard();
+  if (s === 'pre' || from === 'picks' || from === 'soon') startBoard();
   if (s === 'pre') {
     badge.className = 'live-badge quiet'; badge.textContent = 'LOCKED'; $('lbTitle').textContent = 'Standings';
     preLeft = 20; $('preClock').textContent = '0:20';
@@ -547,6 +779,71 @@ function startBoard() { // lineup locked: build the standings rows and open the 
   addFeed({ type:'chat', e:entries[1], text:'good luck everybody 🫡' });
   addFeed({ type:'chat', e:entries[4], text:'8 of us, one winner. no pressure' });
 }
+/* ---------- stage 0: tiers pending ---------- */
+let cdTimer, cdLeft, howT = [], howI = 0;
+function renderCd() {
+  const v = [Math.floor(cdLeft / 3600), Math.floor(cdLeft / 60) % 60, cdLeft % 60].map(n => String(n).padStart(2, '0')), old = [...$('cd').querySelectorAll('b')].map(b => b.textContent);
+  $('cd').innerHTML = v.map((x, i) => `<div><b class="num ${old[i] && old[i] !== x ? 'tk' : ''}">${x}</b><span>${['hrs', 'min', 'sec'][i]}</span></div>`).join('<em>:</em>');
+}
+function startSoon() {
+  cdLeft = 2 * 3600 + 14 * 60 + 36; renderCd();
+  cdTimer = setInterval(() => { cdLeft--; if (cdLeft <= 0) revealTiers(); else renderCd(); }, 1000);
+  const pool = players.slice().sort((a, b) => a.id * 7 % 26 - b.id * 7 % 26).map(p => `<div class="pool-p"><u>?</u>${pav(p)}${p.short}</div>`).join('');
+  $('poolT').innerHTML = pool + pool;
+  howGo(0);
+}
+function revealTiers() { setStage('picks'); $('tiers').classList.add('deal'); setTimeout(() => $('tiers').classList.remove('deal'), 2200); }
+const HOW = [
+  { t:'Pick 4 players', d:'Tonight\'s players are split into 4 tiers, stars at the top. Pick one player from each tier to build your lineup.',
+    html: () => [1, 2, 3, 4].map((t, i) => `<div class="hw-tier"><span class="tl">TIER ${t}</span>${players.filter(p => p.tier === t && !p.out).slice(0, 4).map((p, j) =>
+      `<div class="hw-p ${j === [1, 0, 2, 1][i] ? 'ch' : ''}" style="--d:${(.5 + i * .8).toFixed(1)}s">${pav(p)}<small>${p.short}</small></div>`).join('')}</div>`).join('') },
+  { t:'Score live', d:'Every point, rebound, assist, steal and block your players get adds fantasy points to your total, as it happens.',
+    html: () => `<div class="hw-live">${pav(byLast('Wembanyama'))}<div><b>V. Wembanyama</b><div class="hw-fp num" id="hwFp">0.00</div><small>fantasy points</small></div></div><div class="hw-evs" id="hwEvs"></div>`,
+    run: at => { let tot = 0; [['Three-pointer', 3.5], ['Rebound', 1.25], ['Block', 2], ['Assist', 1.5], ['Dunk', 2], ['Steal', 2]].forEach(([n, v], i) => at(() => {
+      tot += v; $('hwEvs').insertAdjacentHTML('beforeend', `<span>${n}<b>+${v}</b></span>`); const f = $('hwFp'); f.textContent = tot.toFixed(2); f.classList.remove('pop'); f.offsetHeight; f.classList.add('pop'); }, 500 + i * 620)); } },
+  { t:'Climb the board', d:'Your four players\' points add up to your score. Watch yourself move up and down the standings with every play.',
+    html: () => `<div class="hw-lb" id="hwLb">${['splash-dc', 'splash-bj', 'splash-jm', 'You'].map((n, i) => `<div class="hw-row ${i === 3 ? 'me' : ''}"><span class="rk"></span><span>${n}</span><span class="up"></span><span class="sc num"></span></div>`).join('')}</div>`,
+    run: at => { const sc = [31.5, 29, 27.25, 24.5], rows = [...$('hwLb').children];
+      const place = up => { const order = sc.map((v, i) => i).sort((a, b) => sc[b] - sc[a]); order.forEach((i, r) => { rows[i].style.top = r * 50 + 'px'; rows[i].querySelector('.rk').textContent = r + 1; rows[i].querySelector('.sc').textContent = sc[i].toFixed(2); }); rows[3].querySelector('.up').textContent = up || ''; };
+      place(); [[28, '▲ +3.5 three'], [30.5, '▲ +2.5 assist, FT'], [33.75, '▲ +3.25 block, rebound']].forEach(([v, u], i) => at(() => { sc[3] = v; place(u); }, 900 + i * 1050)); } },
+  { t:'Top score wins', d:'When the last game ends, the highest total takes the prize. You can swap a player any time before his game tips off.',
+    html: () => `<div class="hw-win">${Array.from({ length:16 }, (_, i) => `<i style="left:${4 + i * 6}%; background:${['#14E0C8', '#f59e0b', '#a78bfa', '#ef4444'][i % 4]}; animation-delay:${(i * 37 % 20) / 10 - 2}s"></i>`).join('')}<div class="hw-crown">👑</div><b>1st place wins $72</b><small>8 entries · $10 each · winner takes the prize</small></div>` }
+];
+function howGo(i) {
+  howT.forEach(clearTimeout); howT = []; howI = i % HOW.length; const h = HOW[howI];
+  $('howSteps').innerHTML = HOW.map((x, j) => `<button class="${j === howI ? 'on' : j < howI ? 'done' : ''}" data-i="${j}"><i></i><b>${j + 1}</b><span>${x.t}</span></button>`).join('');
+  $('howStage').innerHTML = `<div class="scene">${h.html()}</div><p class="how-d"><b>${h.t}.</b> ${h.d}</p>`;
+  if (h.run) h.run((fn, ms) => howT.push(setTimeout(fn, ms)));
+  howT.push(setTimeout(() => howGo(howI + 1), 4600));
+}
+$('howSteps').onclick = ev => { const b = ev.target.closest('button'); if (b) howGo(+b.dataset.i); };
+$('btnReveal').onclick = revealTiers;
+$('btnNotify').onclick = () => { const b = $('btnNotify'), on = b.classList.toggle('set'); b.textContent = on ? '✓ We\'ll notify you at 9:00 PM ET' : '🔔 Notify me when tiers drop'; };
+/* ---------- mobile: standings / huddle switch, play ticker, phone preview ---------- */
+function setMview(v) { document.body.classList.toggle('mv-huddle', v === 'huddle'); [...$('mview').children].forEach(b => b.classList.toggle('on', b.dataset.v === v)); if (v === 'huddle') $('ticker').classList.remove('on'); }
+$('mview').onclick = ev => { const b = ev.target.closest('button'); if (b) setMview(b.dataset.v); };
+let tkT;
+function showTicker(it) {
+  const t = $('ticker');
+  t.innerHTML = `${pav(it.p)}<div><b>${it.p.short}</b> ${it.text}<small>${fpStr(it.d)}${it.to < it.from ? ' · ▲ you climb to ' + ord(it.to) : it.to > it.from ? ' · ▼ you slip to ' + ord(it.to) : ''}</small></div>`;
+  t.classList.remove('on'); t.offsetHeight; t.classList.add('on'); clearTimeout(tkT); tkT = setTimeout(() => t.classList.remove('on'), 3400);
+}
+$('ticker').onclick = () => { setMview('huddle'); scrollTo(0, 0); };
+window.__state = () => ({ stage, sel: sel.slice() });
+function setDevice(m) {
+  [...$('dev').children].forEach(b => b.classList.toggle('on', b.dataset.d === m));
+  if (m === 'phone') {
+    if (document.body.classList.contains('phone-mode')) return;
+    clearTimeout(timer); clearInterval(preTimer); clearInterval(cdTimer); howT.forEach(clearTimeout); hidePop();
+    document.body.classList.add('phone-mode'); scrollTo(0, 0);
+    $('phoneFrame').src = location.pathname + '?m=1&st=' + stage + '&sel=' + sel.map(x => x === null ? '' : x).join('.');
+  } else if (document.body.classList.contains('phone-mode')) {
+    let st = { stage, sel }; try { st = $('phoneFrame').contentWindow.__state(); } catch (e) {}
+    document.body.classList.remove('phone-mode'); $('phoneFrame').src = 'about:blank';
+    sel = st.sel.slice(); setStage(st.stage);
+  }
+}
+$('dev').onclick = ev => { const b = ev.target.closest('button'); if (b) setDevice(b.dataset.d); };
 $('steps').onclick = ev => { const b = ev.target.closest('button'); if (b && b.dataset.st !== stage) setStage(b.dataset.st); };
 $('btnTip').onclick = () => setStage('live');
 $('btnEdit').onclick = () => setStage('picks');
@@ -699,6 +996,7 @@ function addFeed(it) {
   } else {
     const p = it.p;
     el.className = 'fi play' + (it.mine ? ' mine' : '');
+    if (it.mine || it.to !== it.from) showTicker(it);
     let tags = `<span class="tag fp ${it.d < 0 ? 'neg' : ''}">${fpStr(it.d)}</span>`;
     if (it.bonus) tags += `<span class="tag bonus">🎉 ${it.bonus} bonus</span>`;
     if (it.mine) tags += `<span class="tag yours">YOUR PICK</span>`;
@@ -847,8 +1145,11 @@ $('gifQ').onkeydown = ev => { if (ev.key === 'Enter') { ev.preventDefault(); if 
 $('gifGrid').onclick = ev => { const t = ev.target.closest('.gif'); if (t && gifResults[t.dataset.i]) sendGif(gifResults[t.dataset.i]); };
 $('quick').onclick = ev => { if (ev.target.tagName === 'BUTTON') say(ev.target.textContent); };
 
+const Q = new URLSearchParams(location.search);
+if (Q.get('m')) document.body.classList.add('embed');
 resetSim();
-setStage('picks');
+if (Q.get('sel')) { const v = Q.get('sel').split('.').map(x => x === '' ? null : +x); if (v.length === 4 && v.every(x => x === null || players[x])) sel = v; }
+setStage(['soon', 'picks', 'pre', 'live'].includes(Q.get('st')) ? Q.get('st') : 'soon');
 </script>
 </body>
 </html>
